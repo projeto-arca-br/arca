@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/logo-escuro.svg">
-    <img src="docs/assets/logo.svg" alt="Arca" width="360">
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/logo-vertical-escuro.svg">
+    <img src="docs/assets/logo-vertical.svg" alt="Arca" width="240">
   </picture>
 </p>
 
@@ -202,7 +202,7 @@ Checklist de publicação: [docs/RELEASE.md](docs/RELEASE.md).
 
 ## Identidade visual e paleta
 
-Conceito "arca-farol": casco de arca com um farol central emitindo arcos de sinal. Logo e favicon em
+Conceito "arca": cabine de telhado baixo com janela em ferrugem sobre um casco de tábuas curvas, simétrico, com a palavra ARCA em capitais geométricas (versões horizontal e empilhada, claro e escuro). Logo e favicon em
 [docs/assets/](docs/assets/) (cópias servidas pelo portal em `portal/app/static/site/imagens/`), todos locais.
 Os tokens de cor ficam em `portal/app/static/site/css/style.css`, em português; use os aliases semânticos
 (`--fundo`, `--texto`, `--link`, `--acento`...) nas telas novas.

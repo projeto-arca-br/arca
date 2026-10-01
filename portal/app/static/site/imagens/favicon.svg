@@ -1,12 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Arca">
   <title>Arca</title>
   <rect width="64" height="64" rx="13" fill="#1C2421"/>
-  <path d="M5 42H59Q58 53 49 57H15Q6 53 5 42Z" fill="#7FA363"/>
-  <path d="M26 42L28.3 28H35.7L38 42Z" fill="#EDE6D6"/>
-  <rect x="25" y="26" width="14" height="3" fill="#EDE6D6"/>
-  <rect x="28" y="16" width="8" height="10" fill="#E8873F"/>
-  <path d="M27 16L32 10.5L37 16Z" fill="#EDE6D6"/>
-  <g fill="none" stroke="#E8873F" stroke-width="4.5" stroke-linecap="round">
-    <path d="M44.5 11.5A16 16 0 0 1 44.5 30.5"/><path d="M19.5 11.5A16 16 0 0 0 19.5 30.5"/>
+  <g transform="translate(32 32.5) scale(.9) translate(-32 -26)">
+    <mask id="m" maskUnits="userSpaceOnUse" x="-10" y="-10" width="90" height="90">
+      <rect x="-10" y="-10" width="90" height="90" fill="#fff"/>
+      <path d="M-6 23.4Q32 41.8 70 23.4M-6 33.2Q32 50.400000000000006 70 33.2M32 21V52" fill="none" stroke="#000" stroke-width="2.6"/>
+    </mask>
+    <mask id="mc" maskUnits="userSpaceOnUse" x="-10" y="-10" width="90" height="90">
+      <rect x="-10" y="-10" width="90" height="90" fill="#fff"/>
+      <path d="M0 17.6H64" stroke="#000" stroke-width="0"/>
+    </mask>
+    <path mask="url(#mc)" d="M32 6L51 17.6H47.6V23.4H16.4V17.6H13Z" fill="#EDE6D6"/>
+    <rect x="27.2" y="13.3" width="9.6" height="3.8" fill="#A8471F"/>
+    <rect x="27.2" y="16.1" width="9.6" height="1" fill="#1C2421"/>
+    <path mask="url(#m)" d="M1.5 21.6Q10 25.6 16.4 22.6H47.6Q54 25.6 62.5 21.6C59 37 47 46 32 46C17 46 5 37 1.5 21.6Z" fill="#7FA363"/>
   </g>
 </svg>
