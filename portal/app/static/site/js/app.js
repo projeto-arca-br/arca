@@ -69,7 +69,7 @@
           A.api('DELETE', '/api/favoritos/' + encodeURIComponent(f.id)).then(carregarFavoritos)
             .catch(function () { $('favorito-mensagem').textContent = 'Não foi possível remover o favorito.'; remover.disabled = false; });
         });
-        ul.appendChild(el('li', {}, [A.icone('estrela'), info, remover]));
+        ul.appendChild(el('li', {}, [A.icone('estrela', 'icone-favorito'), info, remover]));
       });
     }).catch(function () { $('favoritos').textContent = ''; $('favoritos').appendChild(el('li', { 'class': 'vazio', text: 'Não foi possível carregar os favoritos.' })); });
   }
