@@ -1,0 +1,12 @@
+# Usado só por scripts/fumaca.sh (spec 008): isola a stack de teste da internet.
+# A rede `internal` passa a ser `internal: true` (sem rota de saída nem DNS externo);
+# só o Caddy entra também na rede `edge` (comum), necessária para publicar a porta no host.
+# Se algum serviço (exceto o Caddy) precisasse de internet, ficaria "unhealthy" no teste.
+services:
+  caddy:
+    networks: !override [internal, edge]
+
+networks:
+  internal:
+    internal: true
+  edge: {}

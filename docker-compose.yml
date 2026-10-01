@@ -1,0 +1,217 @@
+name: arca
+
+services:
+  mariadb:
+    image: ${ARCA_IMAGEM_MARIADB}
+    restart: unless-stopped
+    mem_limit: 384m
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_DATABASE:-arca}
+      MARIADB_USER: ${MARIADB_USER:-arca}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+    command:
+      - --innodb-buffer-pool-size=128M
+      - --max-connections=50
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./data/mariadb:/var/lib/mysql
+    networks: [internal]
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  flatnotes:
+    image: ${ARCA_IMAGEM_FLATNOTES}
+    restart: unless-stopped
+    mem_limit: 256m
+    environment:
+      FLATNOTES_AUTH_TYPE: none
+      FLATNOTES_PATH_PREFIX: /notas
+      PUID: ${ARCA_UID:-1000}
+      PGID: ${ARCA_GID:-1000}
+    volumes:
+      - ./data/flatnotes:/data
+    networks: [internal]
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://127.0.0.1:8080/notas/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 15s
+
+  kiwix:
+    image: ${ARCA_IMAGEM_KIWIX}
+    restart: unless-stopped
+    mem_limit: 256m
+    # O shell do start.sh expande o glob: serve todos os .zim de data/zim
+    command: ["--urlRootLocation=/wiki", "/data/*.zim"]
+    volumes:
+      - ./data/zim:/data:ro
+    networks: [internal]
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/wiki/"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+
+  portal:
+    build:
+      context: ./portal
+      target: runtime
+      args:
+        IMAGEM_PYTHON: ${ARCA_IMAGEM_PYTHON}
+    image: arca-portal:0.1.0
+    restart: unless-stopped
+    mem_limit: 128m
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    environment:
+      ARCA_BD_HOST: mariadb
+      ARCA_BD_NOME: ${MARIADB_DATABASE:-arca}
+      ARCA_BD_USUARIO: ${MARIADB_USER:-arca}
+      ARCA_BD_SENHA: ${MARIADB_PASSWORD}
+      # Perfis do Compose ativos: serviços de perfis desligados aparecem como "desativado"
+      ARCA_PERFIS_ATIVOS: ${COMPOSE_PROFILES:-}
+    volumes:
+      # Inventário de conteúdo: somente leitura
+      - ./data/zim:/biblioteca/zim:ro
+      - ./data/maps:/biblioteca/mapas:ro
+      - ./data/models:/biblioteca/modelos:ro
+    networks: [internal]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://127.0.0.1:8000/api/saude', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+
+  # ---- Perfis opcionais (COMPOSE_PROFILES=traducao,cursos,midia) ----
+  # O Caddy NÃO depende destes serviços: sem o perfil, a rota responde 503 amigável.
+
+  libretranslate:
+    image: ${ARCA_IMAGEM_LIBRETRANSLATE}
+    profiles: [traducao]
+    restart: unless-stopped
+    mem_limit: 1g
+    # UID do usuário: arquivos de modelos em data/ ficam do dono, não de root
+    user: "${ARCA_UID:-1000}:${ARCA_GID:-1000}"
+    environment:
+      HOME: /tmp
+      XDG_DATA_HOME: /data
+      LT_URL_PREFIX: /traducao
+      # Só en/pt/es; sem atualização de modelos (offline após o 1º download)
+      LT_LOAD_ONLY: ${LT_LOAD_ONLY:-en,pt,es}
+      LT_UPDATE_MODELS: "false"
+      LT_DISABLE_WEB_UI: "false"
+    volumes:
+      # Modelos Argos (baixados uma vez com `make modelos-traducao`)
+      - ./data/models/argos:/data/argos-translate
+    networks: [internal]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://127.0.0.1:5000/traducao/languages', timeout=5)"]
+      interval: 15s
+      timeout: 8s
+      retries: 10
+      start_period: 60s
+
+  kolibri:
+    image: ${ARCA_IMAGEM_KOLIBRI}
+    profiles: [cursos]
+    restart: unless-stopped
+    mem_limit: 768m
+    environment:
+      KOLIBRI_URL_PATH_PREFIX: /cursos/
+    volumes:
+      - ./data/kolibri:/kolibri
+    networks: [internal]
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request as u; u.urlopen('http://127.0.0.1:8080/cursos/api/public/info/', timeout=5)"]
+      interval: 15s
+      timeout: 8s
+      retries: 10
+      start_period: 60s
+
+  kavita:
+    image: ${ARCA_IMAGEM_KAVITA}
+    profiles: [midia]
+    restart: unless-stopped
+    mem_limit: 512m
+    volumes:
+      - ./data/kavita:/kavita/config
+      - ./data/books:/books
+      - ./data/comics:/comics
+    networks: [internal]
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://127.0.0.1:5000/livros/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+
+  jellyfin:
+    image: ${ARCA_IMAGEM_JELLYFIN}
+    profiles: [midia]
+    restart: unless-stopped
+    mem_limit: 1g
+    # Transcodificação por software: limitada a 2 CPUs para não travar o resto
+    cpus: 2
+    user: "${ARCA_UID:-1000}:${ARCA_GID:-1000}"
+    environment:
+      JELLYFIN_CONFIG_DIR: /config
+      JELLYFIN_DATA_DIR: /config/data
+      JELLYFIN_CACHE_DIR: /cache
+    volumes:
+      # config/network.xml define BaseUrl=/midia (criado pelo `make subir`)
+      - ./data/jellyfin/config:/config
+      - ./data/jellyfin/cache:/cache
+      - ./data/media/movies:/media/movies:ro
+      - ./data/media/music:/media/music:ro
+    networks: [internal]
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://127.0.0.1:8096/midia/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+
+  caddy:
+    image: ${ARCA_IMAGEM_CADDY}
+    restart: unless-stopped
+    mem_limit: 64m
+    depends_on:
+      portal:
+        condition: service_healthy
+      flatnotes:
+        condition: service_healthy
+      kiwix:
+        condition: service_healthy
+    ports:
+      # Único serviço que publica porta no host
+      - "${ARCA_ENDERECO:-127.0.0.1}:${ARCA_PORTA:-80}:80"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./data/maps:/srv/maps:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks: [internal]
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/saude-proxy"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+networks:
+  internal:
+    driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:

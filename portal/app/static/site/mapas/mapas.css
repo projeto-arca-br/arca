@@ -1,0 +1,13 @@
+.mapas-miolo{max-width:1200px}
+.barra{display:grid;grid-template-columns:1fr;gap:8px;margin:8px 0}
+@media(min-width:720px){.barra{grid-template-columns:minmax(200px,1fr) 2fr}}
+.barra select{min-height:44px;padding:0 10px;border-radius:8px;border:1px solid var(--borda);background:var(--superficie);color:var(--texto);font:inherit;width:100%}
+.busca{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}
+.mapa{width:100%;height:65vh;min-height:320px;border:1px solid var(--borda);border-radius:12px;overflow:hidden;background:var(--superficie)}
+.resultados{margin:0 0 8px;max-height:220px;overflow:auto}
+.resultados button{all:unset;cursor:pointer;display:block;width:100%;padding:4px 0;min-height:36px;box-sizing:border-box}
+.resultados button:focus-visible{outline:3px solid var(--foco);outline-offset:2px}
+.estado-vazio{background:var(--superficie);border:1px solid var(--borda);border-radius:12px;padding:8px 16px;margin-bottom:12px}
+.mensagem{color:var(--texto-suave)}
+.mensagem.err{color:var(--fora-do-ar)}
+.maplibregl-ctrl-attrib a{color:inherit}

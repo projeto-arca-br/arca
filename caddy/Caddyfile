@@ -1,0 +1,72 @@
+{
+	auto_https off
+	admin off
+}
+
+:80 {
+	encode zstd gzip
+
+	# Healthcheck do próprio Caddy
+	handle /saude-proxy {
+		respond "ok" 200
+	}
+
+	# Rotas por caminho. Todos os serviços tratam o prefixo por conta própria
+	# (base URL), sem strip no Caddy. Serviços sem suporte a base URL: usar
+	# fallback por subdomínio (ver docs do Arca).
+	# /traducao /cursos /livros /midia são de perfis opcionais do Compose: o Caddy
+	# não depende deles e resolve o upstream só na requisição; se o serviço não
+	# está rodando, o handle_errors abaixo devolve uma página 503 amigável.
+	# /notas e /wiki: o prefixo é tratado pelo próprio serviço
+	# (FLATNOTES_PATH_PREFIX e kiwix --urlRootLocation), sem strip no Caddy.
+	# Kolibri e LibreTranslate só respondem com a barra final
+	redir /traducao /traducao/ 308
+	redir /cursos /cursos/ 308
+	redir /livros /livros/ 308
+	redir /midia /midia/ 308
+	handle /notas* {
+		reverse_proxy flatnotes:8080
+	}
+	handle /wiki* {
+		reverse_proxy kiwix:8080
+	}
+	handle /traducao* {
+		reverse_proxy libretranslate:5000
+	}
+	handle /cursos* {
+		reverse_proxy kolibri:8080
+	}
+	handle /livros* {
+		reverse_proxy kavita:5000
+	}
+	handle /midia* {
+		reverse_proxy jellyfin:8096
+	}
+	# Tiles PMTiles: arquivos de data/maps servidos com Range/206 (file_server),
+	# sem compressão (Range precisa de bytes exatos) e com cache revalidável.
+	# A página /mapas/ em si é estática e vem do portal (catch-all abaixo).
+	handle /mapas/data/* {
+		uri strip_prefix /mapas/data
+		root * /srv/maps
+		header Cache-Control "public, max-age=3600, must-revalidate"
+		file_server
+	}
+
+	# Serviço opcional desligado (perfil do Compose inativo) ou ainda iniciando
+	handle_errors {
+		@indisponivel `{err.status_code} in [502, 503, 504]`
+		handle @indisponivel {
+			header Content-Type "text/html; charset=utf-8"
+			header Retry-After 30
+			respond `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Serviço indisponível</title><body style="font-family:system-ui;max-width:32rem;margin:3rem auto;padding:0 1rem"><h1>Serviço indisponível</h1><p>Este serviço está desativado ou ainda iniciando. Ative o perfil no <code>COMPOSE_PROFILES</code> do <code>.env</code> e rode <code>make subir</code>.</p><p><a href="/">Voltar ao painel</a></p>` 503
+		}
+	}
+
+	# Portal: API em /api e frontend estático em / (servido pelo próprio portal)
+	handle /api* {
+		reverse_proxy portal:8000
+	}
+	handle {
+		reverse_proxy portal:8000
+	}
+}

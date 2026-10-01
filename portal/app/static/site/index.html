@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Arca - Painel</title>
+<link rel="icon" href="/imagens/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/imagens/favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="/imagens/icone-192.png">
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/common.js"></script>
+<script src="/js/app.js" defer></script>
+</head>
+<body>
+<header class="topo">
+  <a class="marca" href="/"><img class="logo-claro" src="/imagens/logo.svg" alt="Arca" width="115" height="40"><img class="logo-escuro" src="/imagens/logo-escuro.svg" alt="" width="115" height="40"></a>
+  <nav class="principal" aria-label="Principal">
+    <a href="/" aria-current="page">Painel</a>
+    <a href="/ajuda/">Ajuda</a>
+    <button type="button" class="botao" id="alternar-tema" aria-label="Alternar tema"></button>
+  </nav>
+</header>
+<main class="miolo">
+  <h1>Arca</h1>
+  <p class="destaque">Seu servidor local de conhecimento, funcionando sem internet.</p>
+  <div id="aviso" class="aviso" role="alert">Não foi possível falar com o portal. Tentando novamente...</div>
+
+  <section aria-labelledby="t-servicos">
+    <h2 id="t-servicos">Ferramentas</h2>
+    <ul id="servicos" class="grade" aria-live="polite"></ul>
+    <p id="servicos-carregando" class="destaque">Carregando ferramentas...</p>
+  </section>
+
+  <section aria-labelledby="t-favoritos">
+    <h2 id="t-favoritos">Favoritos</h2>
+    <ul id="favoritos" class="lista"></ul>
+    <form id="form-favorito" class="adicionar" autocomplete="off">
+      <label class="campo">Título<input id="favorito-titulo" type="text" maxlength="200" required></label>
+      <label class="campo">Endereço (ex.: /wiki/ ou /notas/)<input id="favorito-url" type="text" inputmode="url" required></label>
+      <label class="campo">Categoria (opcional)<input id="favorito-categoria" type="text" maxlength="100"></label>
+      <button class="botao primario" type="submit">Adicionar</button>
+    </form>
+    <p id="favorito-mensagem" class="mensagem" role="alert"></p>
+  </section>
+
+  <section aria-labelledby="t-biblioteca">
+    <h2 id="t-biblioteca">Biblioteca instalada</h2>
+    <div id="biblioteca"><p class="vazio">Carregando...</p></div>
+  </section>
+
+  <footer>Arca funciona 100% localmente: nenhuma requisição sai da sua rede. <a href="/api/docs">API</a></footer>
+</main>
+</body>
+</html>

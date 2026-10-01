@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EncodingOptions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <EncodingThreadCount>2</EncodingThreadCount>
+  <HardwareAccelerationType>none</HardwareAccelerationType>
+  <EnableHardwareEncoding>false</EnableHardwareEncoding>
+  <EnableThrottling>true</EnableThrottling>
+  <ThrottleDelaySeconds>60</ThrottleDelaySeconds>
+  <EnableSegmentDeletion>true</EnableSegmentDeletion>
+  <DownMixAudioBoost>2</DownMixAudioBoost>
+</EncodingOptions>

@@ -1,0 +1,38 @@
+# Testes do portal: MariaDB real e descartável (tmpfs), isolado do banco de desenvolvimento.
+#   docker compose -f docker-compose.yml -f docker-compose.teste.yml run --rm portal pytest
+services:
+  mariadb-teste:
+    image: ${ARCA_IMAGEM_MARIADB}
+    environment:
+      MARIADB_ROOT_PASSWORD: teste-root
+      MARIADB_DATABASE: arca_teste
+      MARIADB_USER: arca_teste
+      MARIADB_PASSWORD: teste-senha
+    tmpfs:
+      - /var/lib/mysql
+    networks: [internal]
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 3s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+  portal:
+    build:
+      context: ./portal
+      target: teste
+      args:
+        IMAGEM_PYTHON: ${ARCA_IMAGEM_PYTHON}
+    image: arca-portal-teste:0.1.0
+    depends_on: !override
+      mariadb-teste:
+        condition: service_healthy
+    environment: !override
+      ARCA_BD_HOST: mariadb-teste
+      ARCA_BD_NOME: arca_teste
+      ARCA_BD_USUARIO: arca_teste
+      ARCA_BD_SENHA: teste-senha
+    volumes: !override []
+    healthcheck:
+      disable: true

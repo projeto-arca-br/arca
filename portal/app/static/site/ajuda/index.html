@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Arca - Ajuda</title>
+<link rel="icon" href="/imagens/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/imagens/favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="/imagens/icone-192.png">
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/common.js"></script>
+</head>
+<body>
+<header class="topo">
+  <a class="marca" href="/"><img class="logo-claro" src="/imagens/logo.svg" alt="Arca" width="115" height="40"><img class="logo-escuro" src="/imagens/logo-escuro.svg" alt="" width="115" height="40"></a>
+  <nav class="principal" aria-label="Principal">
+    <a href="/">Painel</a>
+    <a href="/ajuda/" aria-current="page">Ajuda</a>
+    <button type="button" class="botao" id="alternar-tema" aria-label="Alternar tema"></button>
+  </nav>
+</header>
+<main class="miolo ajuda">
+  <h1>Ajuda</h1>
+  <p class="destaque">Guia offline de cada ferramenta do Arca. Tudo aqui funciona sem internet.</p>
+  <nav class="sumario" aria-label="Ferramentas">
+    <a href="#notas">Notas</a><a href="#wiki">Wikipédia</a><a href="#mapas">Mapas</a><a href="#traducao">Tradução</a>
+    <a href="#cursos">Cursos</a><a href="#livros">Livros</a><a href="#midia">Mídia</a><a href="#favoritos">Favoritos</a><a href="#estado">Estado</a>
+  </nav>
+
+  <section id="notas"><h2>Notas (FlatNotes)</h2>
+    <p>Crie, edite, busque e organize notas em markdown. Elas ficam salvas em arquivos no servidor e sobrevivem a reinicializações.</p>
+    <ul><li>Abra em <a href="/notas/">/notas/</a>.</li><li>Use <kbd>Novo</kbd> para criar uma nota e etiquetas para organizar.</li><li>Faça backup copiando a pasta <code>data/flatnotes</code>.</li></ul></section>
+
+  <section id="wiki"><h2>Wikipédia e outros ZIMs (Kiwix)</h2>
+    <p>Leia artigos offline e busque dentro dos conteúdos instalados.</p>
+    <ul><li>Abra em <a href="/wiki/">/wiki/</a> e escolha um conteúdo na estante.</li><li>A caixa de busca pesquisa dentro do ZIM aberto.</li><li>Para adicionar conteúdo, coloque arquivos <code>.zim</code> em <code>data/zim</code> e reinicie o serviço kiwix.</li></ul></section>
+
+  <section id="mapas"><h2>Mapas</h2>
+    <p>Mapa da sua região com zoom e deslocamento, desenhado no seu próprio aparelho a partir de arquivos PMTiles guardados em <code>data/maps</code>. Nada é baixado da internet.</p>
+    <ul><li>Abra em <a href="/mapas/">/mapas/</a>. Arraste para mover; use os botões + e - ou dois dedos para o zoom.</li><li>A caixa de busca procura pelo nome (lugares, pontos de interesse e ruas) na área já carregada: aproxime o mapa da região desejada e busque de novo se não achar.</li><li>Se houver mais de um arquivo <code>.pmtiles</code>, escolha qual usar no seletor "Arquivo de mapa".</li><li>A última posição é lembrada neste aparelho.</li><li>Para adicionar uma região, copie o arquivo <code>.pmtiles</code> para <code>data/maps</code> e recarregue a página. Se a pasta estiver vazia, a tela avisa que não há mapa instalado.</li></ul></section>
+
+  <section id="traducao"><h2>Tradução</h2>
+    <p>Traduza textos entre português, inglês e espanhol sem internet. É um serviço opcional (perfil <code>traducao</code>) e pode estar desativado neste servidor.</p></section>
+
+  <section id="cursos"><h2>Cursos (Kolibri)</h2>
+    <p>Plataforma de ensino offline com canais de cursos. Perfil opcional <code>cursos</code>; o cartão mostra "Desativado" quando não está ligado.</p></section>
+
+  <section id="livros"><h2>Livros e quadrinhos (Kavita)</h2>
+    <p>Biblioteca para ler livros e quadrinhos pelo navegador. Coloque os arquivos nas pastas de livros do servidor para que sejam indexados. Perfil opcional <code>midia</code>.</p></section>
+
+  <section id="midia"><h2>Mídia (Jellyfin)</h2>
+    <p>Assista filmes e ouça música. Coloque os arquivos na pasta de mídia do servidor. Perfil opcional <code>midia</code>; requer mais memória.</p></section>
+
+  <section id="favoritos"><h2>Favoritos</h2>
+    <p>No painel, a seção Favoritos guarda links para páginas que você usa muito (um artigo da wiki, uma nota, um local no mapa).</p>
+    <ul><li>Para adicionar, informe título e endereço. Endereços internos começam com <code>/</code> (ex.: <code>/wiki/A/Basquete</code>); externos com <code>http(s)://</code>.</li><li>Use Remover para apagar um favorito.</li></ul></section>
+
+  <section id="estado"><h2>Estado dos serviços</h2>
+    <ul><li><strong>Online</strong>: o serviço respondeu e pode ser aberto.</li><li><strong>Offline</strong>: o serviço está ligado, mas não respondeu. Aguarde alguns segundos ou peça ao administrador para reiniciá-lo.</li><li><strong>Desativado</strong>: o serviço não faz parte desta instalação.</li></ul>
+    <p>O painel atualiza o estado sozinho a cada 15 segundos. A seção Biblioteca lista os ZIMs, mapas e modelos instalados, com tamanho e data.</p></section>
+
+  <footer><a href="/">Voltar ao painel</a></footer>
+</main>
+</body>
+</html>

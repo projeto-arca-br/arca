@@ -1,0 +1,66 @@
+# Exceções da verificação de convenção (scripts/teste-convencao.py).
+# Formato:  glob | termo[~regex] | justificativa
+#   (separador: " | " com espaços, para a regex poder usar | à vontade)
+#   glob   : caminho relativo à raiz (fnmatch; '*' atravessa pastas)
+#   termo  : termo do glossário em inglês, ou '*' para qualquer um
+#   ~regex : opcional; a exceção só vale nas linhas em que a regex casa
+# Origem: lista de exceções do CLAUDE.md (nomes impostos por terceiros) mais os
+# históricos (migrações já aplicadas e tabelas "Antes -> Agora" da documentação).
+# Toda exceção precisa ser usada: uma sem uso falha o teste (evita lista apodrecer).
+
+# ---- Migrações: já aplicadas não se editam; a 003 e as reversas citam o esquema antigo ----
+portal/migrations/001_init.sql | * | migração aplicada, não editável (CLAUDE.md); nomes do esquema antigo
+portal/migrations/002_extra_services.sql | * | migração aplicada, não editável; nomes do esquema antigo
+portal/migrations/003_traducao_para_portugues.sql | * | converte o esquema antigo: precisa citar os nomes em inglês
+portal/migrations/down/*.sql | * | reversas devolvem o esquema antigo em inglês
+portal/testes/teste_migracoes.py | * | testa a migração 003 sobre dados no esquema antigo (nomes em inglês de propósito)
+
+# ---- Docker Compose e ferramentas de terceiros ----
+docker-compose*.yml | service | chaves 'services' e 'service_healthy' do Docker Compose
+docker-compose.yml | name | chave 'name' do Docker Compose
+docker-compose.yml | profile~profiles: | chave 'profiles' do Docker Compose
+docker-compose.yml | profile~COMPOSE_PROFILES | variável do Docker Compose
+docker-compose.yml | path~FLATNOTES_PATH_PREFIX|KOLIBRI_URL_PATH_PREFIX | variáveis de imagens de terceiros
+docker-compose.yml | health~/health|/api/health | endpoints de saúde impostos por FlatNotes, Kavita e Jellyfin
+.env.example | profile~COMPOSE_PROFILES | variável do Docker Compose
+Makefile | profile~--profile | opção '--profile' do docker compose
+caddy/Caddyfile | path~FLATNOTES_PATH_PREFIX | cita variável de terceiros em comentário
+caddy/Caddyfile | name~<meta name= | atributo HTML 'name' na página inline
+caddy/Caddyfile | title~<title> | elemento HTML 'title' na página inline
+caddy/Caddyfile | profile~COMPOSE_PROFILES | variável do Docker Compose citada na página inline
+portal/Dockerfile | check~PIP_DISABLE_PIP_VERSION_CHECK | variável do pip
+portal/pyproject.toml | name~^name = | chave 'name' do pyproject.toml
+portal/pyproject.toml | description~^description = | chave 'description' do pyproject.toml
+
+# ---- Scripts: opções de CLI e APIs de terceiros ----
+scripts/*.sh | profile~COMPOSE_PROFILES|--profile | variável e opção do Docker Compose
+scripts/*.sh | name~COMPOSE_PROJECT_NAME|-name | variável do Docker Compose e opção do find
+scripts/*.sh | service~--services|\.Service|"services"|services\]|--format | opção/campo do docker compose e chave do compose
+scripts/*.sh | health~\.Health|-v healthy|\.State\.Health | campo do docker (Health) e valor 'healthy'
+scripts/*.sh | path~\bPATH=|translate_path|self\.path|os\.path | variável de ambiente PATH e API do http.server e os.path do Python
+scripts/*.sh | title~"title" | campo JSON da API do FlatNotes (terceiros)
+scripts/*.sh | profile~"profiles" | chave 'profiles' do Docker Compose
+
+# ---- Backend: API do Python, FastAPI e Starlette ----
+portal/app/*.py | path~pathlib|Path|\.path\b | classe Path e atributos da biblioteca padrão do Python
+portal/app/*.py | name~\.name\b|name= | atributo 'name' de Path e parâmetro 'name' do Starlette (mount)
+portal/app/*.py | title~title= | parâmetro 'title' do FastAPI
+portal/testes/*.py | path~tmp_path|self\.path|"paths"|Path | fixture tmp_path do pytest, API do http.server e OpenAPI
+portal/testes/*.py | title~\.title\(\)|"title"\] | método str.title() e chave 'info.title' do OpenAPI
+
+# ---- Frontend: HTML, CSS e DOM são padrões da web ----
+portal/app/static/site/*.html | name~<meta name= | atributo HTML 'name'
+portal/app/static/site/*.html | title~<title> | elemento HTML 'title'
+portal/app/static/site/css/*.css | position~position: | propriedade CSS 'position'
+portal/app/static/site/js/*.js | name~className | propriedade DOM 'className'
+portal/app/static/site/js/*.js | title~\.title\b|\.title =|'title' | propriedade DOM 'title'
+portal/app/static/site/js/*.js | path~'path' | elemento SVG 'path'
+portal/app/static/site/mapas/mapas.js | name~className|properties | DOM e esquema dos tiles Protomaps (terceiros)
+portal/app/static/site/mapas/mapas.js | kind~kind | esquema dos tiles Protomaps (terceiros)
+
+# ---- Documentação: nomes antigos citados de propósito (guia de atualização) ----
+README.md | profile~COMPOSE_PROFILES | variável do Docker Compose, mantida
+README.md | profile~translate,learn,media|ACTIVE_PROFILES|`PROFILE` | nomes antigos na tabela "Antes -> Agora"
+README.md | name~DB_NAME|MAP_NAME | nomes antigos de variáveis no guia de atualização
+README.md | check~CHECK_TIMEOUT | nome antigo de variável no guia de atualização
+docs/*.md | profile~COMPOSE_PROFILES | variável do Docker Compose

@@ -1,0 +1,10 @@
+# Mapas (spec 005)
+
+- Página `/mapas/` em `portal/app/static/site/mapas/` (index.html, mapas.js módulo ES, mapas.css); vendor em `mapas/vendor` (versões em `vendor/VERSIONS.txt`), glifos/sprites em `mapas/assets`.
+- MapLibre 6.x só publica `.mjs` (sem UMD): importar `/mapas/vendor/maplibre-gl.mjs`; ele carrega `-shared.mjs` e `-worker.mjs` relativos a si, então os 3 arquivos ficam juntos. `pmtiles.js` e `basemaps.js` são scripts clássicos (globais `pmtiles`, `basemaps`) e precisam vir antes do módulo.
+- Estilo montado no cliente: `basemaps.layers('protomaps', basemaps.namedFlavor('light'|'dark'), {lang:'pt'})`; sprite/glyphs precisam de URL absoluta (`location.origin`). Tema claro/escuro observado via atributo `data-tema` do `<html>` (MutationObserver) e chama `map.setStyle`.
+- Tiles: Caddy `handle /mapas/data/*` com `strip_prefix` + `root * /srv/maps` (volume `./data/maps:/srv/maps:ro` no caddy) + `file_server` => 206/Content-Range/ETag. `encode` do Caddy não comprime `.pmtiles` (testado: sem Content-Encoding). Diretório sem listagem (404).
+- Lista de arquivos vem de `/api/library` (kind `pmtiles`); nenhum arquivo => aviso de "nenhum mapa instalado".
+- Busca: PMTiles não tem índice; busca por nome usa `querySourceFeatures` (places/pois/roads) nas tiles carregadas (limitação documentada na ajuda).
+- Obter região pequena: `pmtiles extract https://build.protomaps.com/AAAAMMDD.pmtiles out.pmtiles --bbox=minlon,minlat,maxlon,maxlat --maxzoom=14` (go-pmtiles 1.31.2; BH 0.25x0.25 graus ~5 MB). Builds diários existem no dia corrente/anteriores.
+- Teste headless sem rede: Chrome com `--remote-debugging-port`, `--use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshader`, `--host-resolver-rules="MAP * ~NOTFOUND, EXCLUDE localhost, EXCLUDE 127.0.0.1"`; o `--screenshot` simples tira foto antes do mapa renderizar (usar CDP e esperar `map.once('idle')`; mapa exposto em `window.__mapaArca`). O net-log do Chrome mostra requisições do próprio navegador (google), que não são da página.

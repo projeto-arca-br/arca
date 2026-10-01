@@ -1,0 +1,8 @@
+Arquivos vendorizados (sem CDN em tempo de execução). Baixados via npm em tempo de desenvolvimento.
+maplibre-gl 6.11.2 (BSD-3-Clause; licença em LICENSE-maplibre-gl.txt): maplibre-gl.mjs, -shared.mjs, -worker.mjs, .css
+pmtiles 4.5.0 (BSD-3-Clause): pmtiles.js
+@protomaps/basemaps 5.7.2 (BSD-3-Clause): basemaps.js (gera as camadas do estilo; tiles v4 do Protomaps)
+../assets/fonts, ../assets/sprites: github.com/protomaps/basemaps-assets @ 028c18f713baecad011301ff7a69acc39bcc2ae7
+  (glifos Noto Sans Regular/Medium/Italic/Devanagari sob SIL OFL 1.1, ver assets/fonts/OFL.txt; sprites v4 light/dark)
+Dados de exemplo: data/maps/belo-horizonte.pmtiles = extração (pmtiles 1.31.2 extract, bbox -44.10,-20.05,-43.85,-19.80, maxzoom 14)
+  do build Protomaps 20260930, dados OpenStreetMap (ODbL).
