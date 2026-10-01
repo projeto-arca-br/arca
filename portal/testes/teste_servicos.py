@@ -71,3 +71,4 @@ def teste_catalogo_padrao_tem_as_rotas_esperadas(cliente):
     s = por_identificador(cliente.get("/api/servicos"))
     assert {"notas", "wiki", "mapas", "traducao", "cursos", "livros", "midia"} <= set(s)
     assert s["notas"]["caminho"] == "/notas/"
+    assert s["traducao"]["caminho"] == "/tradutor/"

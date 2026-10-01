@@ -106,10 +106,10 @@ services:
       HOME: /tmp
       XDG_DATA_HOME: /data
       LT_URL_PREFIX: /traducao
-      # Só en/pt/es; sem atualização de modelos (offline após o 1º download)
-      LT_LOAD_ONLY: ${LT_LOAD_ONLY:-en,pt,es}
+      # Só en/pb/es; sem atualização de modelos (offline após o 1º download)
+      LT_LOAD_ONLY: ${LT_LOAD_ONLY:-en,pb,es}
       LT_UPDATE_MODELS: "false"
-      LT_DISABLE_WEB_UI: "false"
+      LT_DISABLE_WEB_UI: "true"
     volumes:
       # Modelos Argos (baixados uma vez com `make modelos-traducao`)
       - ./data/models/argos:/data/argos-translate

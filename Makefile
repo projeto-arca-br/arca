@@ -28,16 +28,30 @@ diretorios-extras:
 	done
 	@[ -f data/kavita/appsettings.json ] || cp kavita/appsettings.json data/kavita/appsettings.json
 
-# Baixa UMA vez (precisa de internet) os modelos Argos + MiniSBD de en/pt/es em
+# Baixa UMA vez (precisa de internet) os modelos Argos + MiniSBD de en/pb/es em
 # data/models/argos; depois o LibreTranslate roda 100% offline. Idempotente.
+# Duas listas independentes: o Argos usa 'pb' (português do Brasil); o MiniSBD
+# (segmentador de frases) só conhece códigos ISO e usa 'pt'. 'pb' só existe no Argos.
+# Instala cada pacote Argos que falta (o boot() do LibreTranslate não faz nada se
+# já houver 2 pacotes, o que deixava pb de fora para quem já tinha modelos 'pt').
 # Usa --network host: em algumas redes (MTU/VPN) a bridge do Docker trava no TLS.
+SCRIPT_MODELOS_TRADUCAO = from argostranslate import package; \
+from minisbd import download_models; \
+ARGOS = ['en', 'pb', 'es']; SBD = ['en', 'pt', 'es']; \
+package.update_package_index(); \
+instalados = {(p.from_code, p.to_code) for p in package.get_installed_packages()}; \
+faltam = [p for p in package.get_available_packages() if p.from_code in ARGOS and p.to_code in ARGOS and (p.from_code, p.to_code) not in instalados]; \
+[(print('Baixando pacote:', p.from_code, '->', p.to_code, flush=True), p.install()) for p in faltam]; \
+download_models(SBD, print)
+
 modelos-traducao: ambiente diretorios-extras
 	@set -a; . ./.env; set +a; \
 	docker run --rm --network host --user $$(id -u):$$(id -g) \
 		-e HOME=/tmp -e XDG_DATA_HOME=/data \
 		-v "$$PWD/data/models/argos:/data/argos-translate" \
 		--entrypoint ./venv/bin/python "$$ARCA_IMAGEM_LIBRETRANSLATE" -u -c \
-		"from libretranslate.init import boot; from minisbd import download_models; L=['en','pt','es']; boot(L); download_models(L, print)"
+		"$(SCRIPT_MODELOS_TRADUCAO)" \
+	|| { echo "ERRO: falha ao baixar os modelos de tradução (en, pb, es). Verifique a internet e rode 'make modelos-traducao' de novo." >&2; exit 1; }
 
 # Derruba tudo, inclusive serviços de perfis opcionais.
 derrubar:

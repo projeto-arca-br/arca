@@ -10,7 +10,7 @@ Pré-requisito: o projeto `arca/` e o Docker funcionando.
 ```bash
 make ambiente                                   # .env (troque as senhas)
 make baixar-dados PERFIL=mini               # ou PERFIL=completo
-make modelos-traducao                      # se for usar o perfil traducao (~700 MB)
+make modelos-traducao                      # se for usar o perfil traducao: modelos en, pb e es (~700 MB)
 # Opcional: liste o que será baixado sem baixar: make baixar-dados ARGUMENTOS='--simular'
 ```
 
@@ -116,14 +116,18 @@ Rotina sugerida: `make backup` periódico (cron) copiando o arquivo para outro d
   a API do Swagger também é local.
 - Imagens Docker fixadas por versão+digest; o portal é construído com wheels locais (`portal/wheels`), sem `pip` online.
 - LibreTranslate com `LT_UPDATE_MODELS=false` e modelos em `data/models/argos`.
+  O português do Brasil usa o código `pb` (`LT_LOAD_ONLY=en,pb,es`). Quem já tinha modelos `pt` (Portugal)
+  baixados deve rodar `make modelos-traducao` de novo (com internet): o alvo baixa só os pacotes que faltam
+  (en↔pb) e mantém os antigos. Se o seu `.env` ainda tem `LT_LOAD_ONLY=en,pt,es`, troque por `en,pb,es`.
 - O `make teste-fumaca` (scripts/fumaca.sh) verifica: só o Caddy publica porta; nenhum serviço na rede do host; nenhuma URL externa
   nas configs e no frontend próprio; as páginas `/`, `/ajuda/` e `/mapas/` e seus CSS/JS só referenciam recursos locais que
   resolvem; e roda a stack inteira do núcleo com a rede `internal: true` (sem rota de saída nem DNS externo), confirmando que
   os serviços ficam saudáveis e que portal, FlatNotes e Kiwix não conseguem abrir conexão externa.
 - **Não coberto**: o tráfego do Caddy e do MariaDB não é inspecionado (o Caddy precisa de rede comum para publicar a porta;
   ele não inicia conexões externas pela configuração, o que o teste só verifica lendo o Caddyfile); os perfis opcionais
-  (`traducao`, `cursos`, `midia`) não sobem na fumaça (RAM e imagens grandes): o teste cobre só o redirecionamento e a página
-  503 deles; links externos dentro de conteúdo de terceiros (artigos do Kiwix, canais Kolibri) não são varridos; o
+  (`traducao`, `cursos`, `midia`) não sobem na fumaça por padrão (RAM e imagens grandes): o teste cobre só o redirecionamento e a página
+  503 deles, mais a página `/tradutor/` (do portal). Com `ARCA_FUMACA_TRADUCAO=1 make teste-fumaca` (exige os modelos de
+  `make modelos-traducao`) o perfil `traducao` sobe e a fumaça confere `/traducao/languages` e que `/traducao/` não serve mais a interface; links externos dentro de conteúdo de terceiros (artigos do Kiwix, canais Kolibri) não são varridos; o
   comportamento do navegador do cliente (ex.: verificação de conectividade) está fora do Arca.
 
 ## Hardware e RAM por perfil

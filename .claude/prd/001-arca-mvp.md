@@ -60,7 +60,7 @@ Em cenários sem internet (desastres, áreas remotas, apagões de infraestrutura
 - **MariaDB**: apenas para dados do portal (serviços, favoritos, configurações, inventário de conteúdo, log de saúde). Tuning leve. Migrações SQL numeradas aplicadas na inicialização do portal.
 - **FlatNotes**: sem autenticação (rede local), notas em arquivos markdown em volume; incluído no backup.
 - **Kiwix**: serve todos os ZIMs do diretório de dados, com `urlRootLocation` sob `/wiki`.
-- **LibreTranslate**: idiomas limitados a en/pt/es, modelos pré-baixados, sem atualização de modelos em runtime.
+- **LibreTranslate**: idiomas limitados a en/pb/es, modelos pré-baixados, sem atualização de modelos em runtime.
 - **Kolibri, Kavita, Jellyfin**: ativados por profiles do Compose (`learn`, `media`); conteúdo fornecido pelo usuário em pastas conhecidas; Jellyfin com transcodificação por software limitada.
 - **Recursos**: `mem_limit` por serviço; `restart: unless-stopped`; healthchecks em todos.
 - **Contrato da API do portal** (alto nível): listar serviços com status; CRUD de favoritos; listar inventário de conteúdo; healthcheck do próprio portal.

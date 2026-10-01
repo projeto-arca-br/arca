@@ -41,9 +41,13 @@ Limitações: a **busca por nome só encontra o que já está carregado na tela*
 índice de busca), e cada arquivo cobre só a região extraída (o `baixar-dados` mini baixa Belo
 Horizonte até zoom 14; o completo, Minas Gerais até zoom 12; ajustável com `ARCA_MAPA_AREA`, `ARCA_MAPA_ZOOM_MAXIMO`).
 
-### Tradução (`/traducao/`, perfil `traducao`)
-Interface web do LibreTranslate para en, pt e es. Sem `make modelos-traducao` executado
-antes (com internet), o serviço não traduz. Com os modelos presentes ele nunca baixa nada.
+### Tradução (`/tradutor/`, API em `/traducao/`, perfil `traducao`)
+Abra o cartão "Tradução" do painel (página `/tradutor/`, do próprio portal). Escolha o idioma de origem e o de destino
+entre português (Brasil), inglês e espanhol, digite ou cole o texto e clique em traduzir. O texto fica só na sua rede.
+A tradução em si é feita pelo LibreTranslate (perfil `traducao`); sem o perfil ligado a página abre, mas avisa que o
+serviço está indisponível. Sem `make modelos-traducao` executado antes (com internet), ele não traduz; com os modelos
+presentes nunca baixa nada. A interface web do LibreTranslate está desligada: `/traducao/` é só a API
+(`/traducao/languages` e `/traducao/translate`; o português do Brasil usa o código `pb`).
 
 ### Cursos (`/cursos/`, perfil `cursos`)
 Kolibri. No primeiro acesso aparece o assistente de configuração: crie o "facility" e o

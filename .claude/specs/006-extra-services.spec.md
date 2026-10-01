@@ -27,7 +27,7 @@ Adiciona tradutor, cursos, biblioteca de livros/quadrinhos e mídia como serviç
 
 ## Implementation Tasks
 ### 1. LibreTranslate (profile `translate`)
-- [ ] `LT_LOAD_ONLY=en,pt,es`, `LT_UPDATE_MODELS=false`, volume de modelos; rota `/traducao`
+- [ ] `LT_LOAD_ONLY=en,pb,es`, `LT_UPDATE_MODELS=false`, volume de modelos; rota `/traducao`
 ### 2. Kolibri (profile `learn`)
 - [ ] Volume `data/kolibri`; rota `/cursos`
 ### 3. Kavita (profile `media`)

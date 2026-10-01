@@ -6,6 +6,9 @@ from app.configuracao import configuracoes
 REVERSA_003 = (
     Path(configuracoes.diretorio_migracoes) / "down" / "003_traducao_para_portugues.down.sql"
 )
+REVERSA_005 = (
+    Path(configuracoes.diretorio_migracoes) / "down" / "005_tradutor_no_portal.down.sql"
+)
 
 
 def _tabelas() -> set[str]:
@@ -25,7 +28,7 @@ def teste_rodar_duas_vezes_e_idempotente(cliente):
     assert banco.rodar_migracoes() == []
     with banco.cursor() as cur:
         cur.execute("SELECT versao FROM migracoes_aplicadas ORDER BY versao")
-        assert [r["versao"] for r in cur.fetchall()] == ["001", "002", "003", "004"]
+        assert [r["versao"] for r in cur.fetchall()] == ["001", "002", "003", "004", "005"]
 
 
 def teste_tabelas_e_semente_existem(cliente):
@@ -77,7 +80,7 @@ def teste_reversa_e_nova_aplicacao_preservam_favoritos(cliente):
                 ("Primeiros socorros", "/notas/socorro", "saude")
             ]
             cur.execute("SELECT version FROM schema_migrations ORDER BY version")
-            assert [r["version"] for r in cur.fetchall()] == ["001", "002", "004"]
+            assert [r["version"] for r in cur.fetchall()] == ["001", "002", "004", "005"]
             cur.execute("SELECT check_url FROM services WHERE slug = 'mapas'")
             assert cur.fetchone()["check_url"].endswith("/api/health")
     finally:
@@ -89,3 +92,28 @@ def teste_reversa_e_nova_aplicacao_preservam_favoritos(cliente):
         (criado["id"], "Primeiros socorros", "/notas/socorro", "saude")
     ]
     assert "servicos" in _tabelas() and "services" not in _tabelas()
+
+
+def _caminho_traducao() -> str:
+    with banco.cursor() as cur:
+        cur.execute("SELECT caminho FROM servicos WHERE identificador = 'traducao'")
+        return cur.fetchone()["caminho"]
+
+
+def teste_migracao_005_aponta_cartao_para_o_tradutor(cliente):
+    assert _caminho_traducao() == "/tradutor/"
+
+
+def teste_reversa_da_005_volta_para_traducao_e_reaplica(cliente):
+    try:
+        with banco.cursor() as cur:
+            for instrucao in banco.dividir_instrucoes(REVERSA_005.read_text(encoding="utf-8")):
+                cur.execute(instrucao)
+        assert _caminho_traducao() == "/traducao/"
+        with banco.cursor() as cur:
+            cur.execute("SELECT versao FROM migracoes_aplicadas ORDER BY versao")
+            assert "005" not in [r["versao"] for r in cur.fetchall()]
+    finally:
+        aplicadas = banco.rodar_migracoes()
+    assert aplicadas == ["005_tradutor_no_portal.sql"]
+    assert _caminho_traducao() == "/tradutor/"

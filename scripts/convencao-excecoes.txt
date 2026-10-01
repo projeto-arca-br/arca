@@ -60,7 +60,4 @@ portal/app/static/site/mapas/mapas.js | kind~kind | esquema dos tiles Protomaps 
 
 # ---- Documentação: nomes antigos citados de propósito (guia de atualização) ----
 README.md | profile~COMPOSE_PROFILES | variável do Docker Compose, mantida
-README.md | profile~translate,learn,media|ACTIVE_PROFILES|`PROFILE` | nomes antigos na tabela "Antes -> Agora"
-README.md | name~DB_NAME|MAP_NAME | nomes antigos de variáveis no guia de atualização
-README.md | check~CHECK_TIMEOUT | nome antigo de variável no guia de atualização
 docs/*.md | profile~COMPOSE_PROFILES | variável do Docker Compose

@@ -3,7 +3,8 @@
 # descartável do projeto (projeto Compose arca-fumaca, porta ARCA_PORTA_FUMACA, pasta temporária).
 # Uso: scripts/fumaca.sh [estatico|tudo]   (padrão: tudo; 'estatico' não precisa de Docker em execução
 #      além do 'docker compose config' e não sobe nada)
-# Variáveis: ARCA_PORTA_FUMACA (padrão 8099), ARCA_MANTER_FUMACA=1 (não derruba a stack ao final).
+# Variáveis: ARCA_PORTA_FUMACA (padrão 8099), ARCA_MANTER_FUMACA=1 (não derruba a stack ao final),
+#      ARCA_FUMACA_TRADUCAO=1 (liga o perfil traducao na fumaça: copia data/models e verifica a API do LibreTranslate).
 # Requisitos: Docker + Compose, imagens já locais (ou internet só para o pull), e pelo menos um
 # .zim em data/zim (o Kiwix não sobe sem ZIM). Não baixa nada durante o teste.
 # O que cobre: configuração (só o Caddy publica porta, imagens fixadas, limites), rotas,
@@ -107,6 +108,11 @@ s/^MARIADB_PASSWORD=.*/MARIADB_PASSWORD=fumaca-arca/" "$TRABALHO/.env"
   cp "$ARCA_RAIZ"/data/zim/*.zim "$TRABALHO/data/zim/"
   # "tiles" sintéticos: o teste só exercita Range/206, não o conteúdo
   head -c 2097152 /dev/urandom > "$TRABALHO/data/maps/fumaca.pmtiles"
+  if [ "${ARCA_FUMACA_TRADUCAO:-0}" = 1 ]; then
+    [ -d "$ARCA_RAIZ/data/models/argos" ] || falhar "ARCA_FUMACA_TRADUCAO=1 precisa dos modelos em data/models/argos (make modelos-traducao)."
+    cp -r "$ARCA_RAIZ/data/models/." "$TRABALHO/data/models/"
+    sed -i "s/^COMPOSE_PROFILES=.*/COMPOSE_PROFILES=traducao/" "$TRABALHO/.env"
+  fi
 }
 
 verificacoes_pilha() {
@@ -123,7 +129,9 @@ verificacoes_pilha() {
     estado_saude="$(docker inspect -f '{{.State.Health.Status}}' "$(dc ps -q "$servico")" 2>/dev/null || echo none)"
     [ "$estado_saude" = healthy ] && passou "healthcheck $servico = healthy" || falhou "healthcheck $servico = $estado_saude"
   done
-  verificar "perfis opcionais NÃO estão rodando por padrão" bash -c "[ -z \"\$(cd '$TRABALHO' && COMPOSE_PROJECT_NAME=$PROJETO docker compose ps -q libretranslate kolibri kavita jellyfin)\" ]"
+  local FORA_DO_PADRAO=libretranslate rotas_503="traducao cursos livros midia"
+  [ "${ARCA_FUMACA_TRADUCAO:-0}" = 1 ] && { FORA_DO_PADRAO=""; rotas_503="cursos livros midia"; }
+  verificar "perfis opcionais NÃO estão rodando por padrão" bash -c "[ -z \"\$(cd '$TRABALHO' && COMPOSE_PROJECT_NAME=$PROJETO docker compose ps -q ${FORA_DO_PADRAO} kolibri kavita jellyfin)\" ]"
 
   informar "== 3) Rotas via Caddy =="
   esperar_codigo 200 "/saude-proxy" "$BASE/saude-proxy"
@@ -147,7 +155,9 @@ verificacoes_pilha() {
 import json, sys
 d = {s["identificador"]: s["estado"] for s in json.loads(sys.argv[1])}
 assert {"notas", "wiki", "mapas", "traducao", "cursos", "livros", "midia"} <= set(d), d
-assert all(d[k] == "desativado" for k in ("traducao", "cursos", "livros", "midia")), d
+import os
+desligados = ("cursos", "livros", "midia") if os.environ.get("ARCA_FUMACA_TRADUCAO") == "1" else ("traducao", "cursos", "livros", "midia")
+assert all(d[k] == "desativado" for k in desligados), d
 assert d["notas"] == d["wiki"] == d["mapas"] == "online", d
 PY
   verificar "/api/biblioteca inventaria o ZIM e o PMTiles" bash -c "curl -fs '$BASE/api/biblioteca' | python3 -c 'import json,sys; k={i[\"tipo\"] for i in json.load(sys.stdin)[\"itens\"]}; assert {\"zim\",\"pmtiles\"}<=k, k'"
@@ -162,12 +172,28 @@ PY
 
   informar "== 5) Perfis desligados: redirecionamento e página 503 =="
   local rota redirecao
-  for rota in traducao cursos livros midia; do
+  for rota in $rotas_503; do
     redirecao="$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' "$BASE/$rota")"
     [ "$redirecao" = "308 $BASE/$rota/" ] && passou "/$rota -> 308 /$rota/" || falhou "/$rota: esperado '308 $BASE/$rota/', veio '$redirecao'"
     esperar_codigo 503 "/$rota/ com perfil desligado" "$BASE/$rota/"
   done
   curl -s "$BASE/livros/" | grep -q 'Serviço indisponível' && passou "página 503 amigável em português" || falhou "503 sem página amigável"
+
+  informar "== 5b) Tradutor =="
+  # a página do portal existe com ou sem o perfil; só a API depende do LibreTranslate
+  esperar_codigo 200 "/tradutor/ (página do portal)" "$BASE/tradutor/"
+  curl -fs "$BASE/tradutor/" | grep -q 'Tradutor' && passou "/tradutor/ traz o título em português" || falhou "/tradutor/ sem o título 'Tradutor'"
+  if [ -n "$(cd "$TRABALHO" && COMPOSE_PROJECT_NAME=$PROJETO docker compose ps -q libretranslate 2>/dev/null)" ]; then
+    local idiomas; idiomas="$(curl -s --max-time 15 "$BASE/traducao/languages" || true)"
+    verificar "/traducao/languages lista en, pb e es" python3 - "$idiomas" <<'PY'
+import json, sys
+codigos = {i["code"] for i in json.loads(sys.argv[1])}
+assert {"en", "es"} <= codigos and codigos & {"pb", "pt", "pt-BR"}, codigos
+PY
+    curl -s --max-time 15 "$BASE/traducao/" | grep -qi 'libretranslate' && falhou "/traducao/ ainda serve a interface do LibreTranslate" || passou "/traducao/ não serve mais a interface do LibreTranslate"
+  else
+    passou "perfil traducao desligado: /traducao/ responde 503 (verificado acima) e a API não é consultada"
+  fi
 
   informar "== 6) Favoritos e persistência =="
   local favorito_id

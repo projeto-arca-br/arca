@@ -3,7 +3,7 @@
 # Uso: scripts/baixar-dados.sh [mini|completo] [--simular] [--somente zim,mapas,modelos,kolibri]
 #
 #   mini      Wikipédia pt (mini, ~1,7 GB) + mapas de Belo Horizonte (~5 MB)
-#             + modelos de tradução en/pt/es (~700 MB) + canal Kolibri Ciênsação
+#             + modelos de tradução en/pb/es (~700 MB) + canal Kolibri Ciênsação
 #   completo  Wikipédia pt (nopic, vários GB) + mapas do estado de MG
 #             + modelos de tradução + canais Kolibri (Khan Academy pt-BR, Sikana, PhET...)
 #
@@ -129,7 +129,7 @@ baixar_mapas() {
 
 # ---------- 3. Modelos do LibreTranslate ----------
 baixar_modelos() {
-  informar "== Modelos de tradução (Argos en/pt/es) =="
+  informar "== Modelos de tradução (Argos en/pb/es) =="
   if [ "$SIMULAR" = 1 ]; then informar "  [simulação] make modelos-traducao (~700 MB em data/models/argos)"; return 0; fi
   exigir_docker
   make -C "$ARCA_RAIZ" --no-print-directory modelos-traducao

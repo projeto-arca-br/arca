@@ -17,3 +17,6 @@
 | 013 | Logo arca-farol e paleta | medium | done | feature, design, frontend | 011 |
 | 014 | README da raiz com arquitetura | high | done | docs | 012, 013 |
 | 015 | Teste de convenção e fechamento | medium | done | testing, convention, docs | 014 |
+| 016 | Corrigir o download dos modelos de tradução | high | done | bugfix, ops, translate | 006, 007 |
+| 017 | Página do tradutor dentro do portal | high | done | feature, portal, frontend, translate | 004, 006, 016 |
+| 018 | Testes e documentação do tradutor | medium | done | testing, docs, convention, translate | 016, 017 |

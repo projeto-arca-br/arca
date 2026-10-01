@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Arca - Tradutor</title>
+<link rel="icon" href="/imagens/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/imagens/favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="/imagens/icone-192.png">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/tradutor/tradutor.css">
+<script src="/js/common.js"></script>
+<script type="module" src="/tradutor/tradutor.js"></script>
+</head>
+<body class="tradutor-page">
+<header class="topo">
+  <a class="marca" href="/"><img class="logo-claro" src="/imagens/logo.svg" alt="Arca" width="122" height="40"><img class="logo-escuro" src="/imagens/logo-escuro.svg" alt="" width="122" height="40"></a>
+  <nav class="principal" aria-label="Principal">
+    <a href="/">Painel</a>
+    <a href="/ajuda/#traducao">Ajuda</a>
+    <button type="button" class="botao" id="alternar-tema" aria-label="Alternar tema"></button>
+  </nav>
+</header>
+<main class="miolo tradutor-miolo">
+  <h1>Tradutor</h1>
+  <p class="destaque">Traduza textos entre português (Brasil), inglês e espanhol, sem internet. O texto fica só na sua rede local.</p>
+  <form id="form-traducao" autocomplete="off" novalidate>
+    <div class="idiomas">
+      <label class="campo">De
+        <select id="idioma-origem" disabled></select>
+      </label>
+      <button type="button" class="botao" id="trocar-idiomas" aria-label="Trocar origem e destino" disabled>&#8644;</button>
+      <label class="campo">Para
+        <select id="idioma-destino" disabled></select>
+      </label>
+    </div>
+    <p id="aviso-pivo" class="nota" hidden>Entre espanhol e português a tradução passa pelo inglês e pode ficar menos precisa. Confira o resultado com cuidado.</p>
+    <div class="colunas">
+      <div class="coluna">
+        <label class="campo" for="texto-entrada">Texto original</label>
+        <textarea id="texto-entrada" rows="10" spellcheck="false" placeholder="Digite ou cole o texto aqui"></textarea>
+        <p class="contador"><span id="contador">0</span> caracteres</p>
+      </div>
+      <div class="coluna">
+        <label class="campo" for="texto-saida">Tradução</label>
+        <textarea id="texto-saida" rows="10" readonly placeholder="A tradução aparece aqui"></textarea>
+      </div>
+    </div>
+    <div class="acoes">
+      <button type="submit" class="botao primario" id="botao-traduzir" disabled>Traduzir</button>
+      <button type="button" class="botao" id="botao-copiar" disabled>Copiar tradução</button>
+      <button type="button" class="botao" id="botao-limpar">Limpar</button>
+    </div>
+  </form>
+  <p id="mensagem" class="mensagem" role="status"></p>
+  <footer>Tradução automática feita neste servidor, sem enviar nada para a internet. Veja a <a href="/ajuda/#traducao">Ajuda</a>.</footer>
+</main>
+</body>
+</html>

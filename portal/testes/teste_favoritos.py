@@ -1,12 +1,12 @@
 def teste_ciclo_completo(cliente):
     r = cliente.post(
-        "/api/favoritos", json={"titulo": "Basquete", "url": "/wiki/A/Basketball", "categoria": "wiki"}
+        "/api/favoritos", json={"titulo": "Wikipédia", "url": "/wiki/", "categoria": "wiki"}
     )
     assert r.status_code == 201
     f = r.json()
     assert f["id"] and f["criado_em"].endswith("Z")
 
-    assert cliente.get(f"/api/favoritos/{f['id']}").json()["titulo"] == "Basquete"
+    assert cliente.get(f"/api/favoritos/{f['id']}").json()["titulo"] == "Wikipédia"
     assert [x["id"] for x in cliente.get("/api/favoritos").json()] == [f["id"]]
 
     r = cliente.put(

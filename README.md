@@ -44,7 +44,8 @@ O núcleo (portal, MariaDB, FlatNotes, Kiwix e Caddy) sempre sobe. Os perfis opc
 | `/notas` | FlatNotes (notas em markdown) | núcleo | arquivos `.md` em `data/flatnotes` |
 | `/wiki` | Kiwix (Wikipédia e outros ZIMs) | núcleo | serve todo `data/zim/*.zim` |
 | `/mapas/` | Mapas (MapLibre + PMTiles) | núcleo | página do portal; tiles de `data/maps/*.pmtiles` servidos pelo Caddy em `/mapas/data/` |
-| `/traducao/` | LibreTranslate (en, pt, es) | `traducao` | precisa dos modelos (`make modelos-traducao`) |
+| `/tradutor/` | Tradutor (página do portal: português do Brasil, inglês e espanhol) | núcleo | a página sempre abre; traduzir exige o perfil `traducao` e os modelos (`make modelos-traducao`) |
+| `/traducao/` | API do LibreTranslate (en, pb, es) | `traducao` | só API (`/traducao/languages`, `/traducao/translate`); a interface do LibreTranslate fica desligada |
 | `/cursos/` | Kolibri | `cursos` | canais baixados com `make baixar-dados` |
 | `/livros/` | Kavita (livros e quadrinhos) | `midia` | arquivos em `data/books` e `data/comics` |
 | `/midia/` | Jellyfin (filmes e música) | `midia` | `data/media/movies` e `data/media/music` |
