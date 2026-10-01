@@ -7,7 +7,14 @@ const VARIANTES_PT = ['pb', 'pt-BR', 'pt'];
 const AUTO = 'auto';
 
 const $ = (id) => document.getElementById(id);
-const estado = { idiomas: [], traduzindo: false, pronto: false };
+const estado = { idiomas: [], traduzindo: false, pronto: false, pendente: false, temporizador: null };
+const ESPERA_AUTOMATICA_MS = 700;
+
+// Agenda a tradução automática para quando o usuário parar de digitar.
+function agendarTraducao() {
+  clearTimeout(estado.temporizador);
+  estado.temporizador = setTimeout(() => traduzir(true), ESPERA_AUTOMATICA_MS);
+}
 
 function mostrarMensagem(texto, erro) {
   const m = $('mensagem');
@@ -116,10 +123,15 @@ async function carregarIdiomas() {
   mostrarMensagem('');
 }
 
-async function traduzir() {
-  if (!estado.pronto || estado.traduzindo) return;
+async function traduzir(automatico = false) {
+  clearTimeout(estado.temporizador);
+  if (!estado.pronto) return;
+  if (estado.traduzindo) { estado.pendente = true; return; }
   const texto = $('texto-entrada').value;
-  if (!texto.trim()) { mostrarMensagem('Digite ou cole um texto para traduzir.', true); $('texto-entrada').focus(); return; }
+  if (!texto.trim()) {
+    if (automatico) { $('texto-saida').value = ''; $('botao-copiar').disabled = true; mostrarMensagem(''); return; }
+    mostrarMensagem('Digite ou cole um texto para traduzir.', true); $('texto-entrada').focus(); return;
+  }
   estado.traduzindo = true;
   $('botao-traduzir').disabled = true;
   mostrarMensagem('Traduzindo...');
@@ -138,6 +150,8 @@ async function traduzir() {
   } finally {
     estado.traduzindo = false;
     $('botao-traduzir').disabled = !estado.pronto;
+    // Se o texto mudou durante a chamada, traduz de novo com o texto atual.
+    if (estado.pendente) { estado.pendente = false; traduzir(true); }
   }
 }
 
@@ -151,6 +165,7 @@ function trocarIdiomas() {
   if (saida) { $('texto-entrada').value = saida; $('texto-saida').value = ''; $('botao-copiar').disabled = true; atualizarContador(); }
   guardarPar();
   mostrarMensagem('');
+  if ($('texto-entrada').value.trim()) agendarTraducao();
 }
 
 async function copiar() {
@@ -170,6 +185,7 @@ async function copiar() {
 function limpar() {
   $('texto-entrada').value = ''; $('texto-saida').value = '';
   $('botao-copiar').disabled = true;
+  clearTimeout(estado.temporizador); estado.pendente = false;
   atualizarContador(); mostrarMensagem('');
   $('texto-entrada').focus();
 }
@@ -178,9 +194,9 @@ $('form-traducao').addEventListener('submit', (ev) => { ev.preventDefault(); tra
 $('trocar-idiomas').addEventListener('click', trocarIdiomas);
 $('botao-copiar').addEventListener('click', copiar);
 $('botao-limpar').addEventListener('click', limpar);
-$('texto-entrada').addEventListener('input', atualizarContador);
-$('idioma-origem').addEventListener('change', () => { preencherDestino(); guardarPar(); });
-$('idioma-destino').addEventListener('change', () => { atualizarAviso(); guardarPar(); });
+$('texto-entrada').addEventListener('input', () => { atualizarContador(); agendarTraducao(); });
+$('idioma-origem').addEventListener('change', () => { preencherDestino(); guardarPar(); agendarTraducao(); });
+$('idioma-destino').addEventListener('change', () => { atualizarAviso(); guardarPar(); agendarTraducao(); });
 $('texto-entrada').addEventListener('keydown', (ev) => { if (ev.key === 'Enter' && (ev.ctrlKey || ev.metaKey)) { ev.preventDefault(); traduzir(); } });
 atualizarContador();
 carregarIdiomas();
