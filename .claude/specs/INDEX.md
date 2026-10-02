@@ -20,3 +20,9 @@
 | 016 | Corrigir o download dos modelos de tradução | high | done | bugfix, ops, translate | 006, 007 |
 | 017 | Página do tradutor dentro do portal | high | done | feature, portal, frontend, translate | 004, 006, 016 |
 | 018 | Testes e documentação do tradutor | medium | done | testing, docs, convention, translate | 016, 017 |
+| 019 | Página da Wikipédia dentro do portal | high | done | feature, portal, frontend, wiki | 002, 004, 017 |
+| 020 | Página de notas dentro do portal | high | done | feature, portal, frontend, notes | 002, 004, 017 |
+| 021 | Migração dos cartões, convenção e documentação | medium | done | feature, portal, database, testing, docs, convention | 019, 020 |
+| 022 | Conversor Markdown e verificação da API do FlatNotes | high | done | feature, portal, frontend, notes, testing | 020, 021 |
+| 023 | Editor visual, layout e salvar automático das notas | high | done | feature, portal, frontend, notes | 022, 017 |
+| 024 | Etiquetas editáveis, anexos e documentação do editor de notas | medium | done | feature, portal, frontend, notes, docs, testing, convention | 023 |

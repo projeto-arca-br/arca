@@ -17,7 +17,7 @@
 	# /traducao /cursos /livros /midia são de perfis opcionais do Compose: o Caddy
 	# não depende deles e resolve o upstream só na requisição; se o serviço não
 	# está rodando, o handle_errors abaixo devolve uma página 503 amigável.
-	# /notas e /wiki: o prefixo é tratado pelo próprio serviço
+	# /wiki e /wiki/* (não /wiki*, que engoliria /wikipedia/ do portal) e /notas: o prefixo é tratado pelo próprio serviço
 	# (FLATNOTES_PATH_PREFIX e kiwix --urlRootLocation), sem strip no Caddy.
 	# Kolibri e LibreTranslate só respondem com a barra final
 	redir /traducao /traducao/ 308
@@ -27,7 +27,8 @@
 	handle /notas* {
 		reverse_proxy flatnotes:8080
 	}
-	handle /wiki* {
+	@wiki path /wiki /wiki/*
+	handle @wiki {
 		reverse_proxy kiwix:8080
 	}
 	handle /traducao* {

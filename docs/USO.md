@@ -25,11 +25,34 @@ Também tem favoritos (links para páginas da wiki, notas, locais), inventário 
 instalado (ZIMs, mapas, modelos, com tamanho e data) e tema claro/escuro. Tudo funciona sem internet.
 A página `/ajuda/` explica cada ferramenta offline.
 
-### Notas (`/notas`)
-FlatNotes sem login. As notas são arquivos `.md` em `data/flatnotes` e entram no backup.
+### Notas (`/anotacoes/`)
+Página do portal com editor visual: escreva e formate como em um editor de texto comum, sem
+precisar saber markdown. Por trás está o FlatNotes (sem login), que continua em `/notas/`
+(link "Abrir no FlatNotes"). As notas são arquivos `.md` em `data/flatnotes` e entram no backup.
 
-### Wikipédia (`/wiki`)
-Kiwix serve todos os `.zim` de `data/zim`. **Ao adicionar um ZIM novo, reinicie o Kiwix:**
+- **Escrever**: a barra de ferramentas tem negrito, itálico, riscado, títulos, listas, tarefas,
+  citação, código, link, anexo, divisor e tabela. Digite `/` em uma linha vazia para abrir o menu de
+  blocos. Atalhos: `Ctrl+B`, `Ctrl+I`, `Ctrl+K` (link) e `Ctrl+S` (salvar agora); também funcionam
+  `# `, `- `, `1. `, `[] ` e `> ` no começo da linha. Colar insere só o texto, sem formatação.
+- **Salvar**: automático, 1,5 s depois da última alteração; o canto da folha mostra "Salvando…",
+  "Salvo" ou "Erro ao salvar". Ao trocar de nota ou sair, o Arca espera o salvamento terminar.
+  A nota nova só é criada depois que tem título. Mudar o título renomeia a nota.
+- **Etiquetas**: digite o nome sob o título e tecle `Enter` ou vírgula; o "×" remove. As etiquetas
+  ficam sem acentos, em minúsculas e sem espaços (`#ação` não funcionaria no FlatNotes). No
+  arquivo viram uma linha `#a #b` no começo da nota (escondida na folha, visível em `/notas/`).
+  Na lateral, toque em uma etiqueta para filtrar a lista; ela combina com a busca. A lista de
+  etiquetas pode manter nomes antigos até o FlatNotes reiniciar (`docker compose restart flatnotes`).
+- **Anexos**: o botão de clipe, arrastar arquivos para a folha ou colar uma captura de tela enviam o
+  arquivo ao servidor. Imagens aparecem na nota; outros tipos viram um link com o nome do arquivo
+  (limite de 50 MB por arquivo nesta página). Anexos ficam em `data/flatnotes/attachments` e **não
+  são apagados** quando a nota é excluída.
+- **Excluir**: botão "Excluir" (pede confirmação).
+
+### Wikipédia (`/wikipedia/`)
+Página do portal com busca (sugestões ao digitar e lista de resultados paginada), leitura do
+artigo na própria página e botão de artigo aleatório; funciona com todos os ZIMs instalados.
+Por trás está o Kiwix, que serve todos os `.zim` de `data/zim` e continua em `/wiki/`
+(link "Abrir em tela cheia"). **Ao adicionar um ZIM novo, reinicie o Kiwix:**
 `docker compose restart kiwix`. Os artigos podem ter links externos (citações); eles não
 carregam nada sozinhos, mas só abrem se o dispositivo tiver internet.
 

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Arca - Notas</title>
+<link rel="icon" href="/imagens/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/imagens/favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="/imagens/icone-192.png">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/anotacoes/anotacoes.css">
+<script src="/js/common.js"></script>
+<script type="module" src="/anotacoes/anotacoes.js"></script>
+</head>
+<body class="anotacoes-page">
+<header class="topo">
+  <a class="marca" href="/"><img class="logo-claro" src="/imagens/logo.svg" alt="Arca" width="122" height="40"><img class="logo-escuro" src="/imagens/logo-escuro.svg" alt="" width="122" height="40"></a>
+  <nav class="principal" aria-label="Principal">
+    <a href="/">Painel</a>
+    <a href="/ajuda/#notas">Ajuda</a>
+    <button type="button" class="botao" id="alternar-tema" aria-label="Alternar tema"></button>
+  </nav>
+</header>
+<main class="miolo anotacoes-miolo">
+  <h1>Notas</h1>
+  <p id="mensagem" class="mensagem" role="status"></p>
+  <div class="anotacoes" id="anotacoes">
+    <aside class="lista-notas cartao" id="coluna-lista" aria-label="Lista de notas">
+      <form id="form-busca" role="search" autocomplete="off" novalidate>
+        <label class="campo" for="busca">Buscar nas notas
+          <input type="search" id="busca" placeholder="Título ou conteúdo">
+        </label>
+        <div class="campo" role="group" aria-labelledby="rotulo-filtro">
+          <span id="rotulo-filtro">Filtrar por etiqueta</span>
+          <ul id="filtro-etiquetas" class="chips filtro-etiquetas"></ul>
+        </div>
+      </form>
+      <div class="acoes">
+        <button type="button" class="botao primario" id="botao-nova">Nova nota</button>
+      </div>
+      <p id="resumo-lista" class="contador" aria-live="polite"></p>
+      <ul id="lista" class="itens-notas"></ul>
+      <a class="botao" href="/notas/">Abrir no FlatNotes</a>
+    </aside>
+    <section class="folha cartao" id="coluna-folha" aria-label="Nota">
+      <div class="folha-topo">
+        <button type="button" class="botao pequeno" id="botao-voltar"><span class="icone-botao" data-icone="voltar"></span>Voltar à lista</button>
+        <button type="button" class="botao pequeno" id="botao-recolher" aria-controls="coluna-lista" aria-expanded="true"><span class="icone-botao" data-icone="menu"></span><span id="texto-recolher">Ocultar lista</span></button>
+        <span id="estado-salvamento" class="contador estado-salvamento" role="status" aria-live="polite"></span>
+        <button type="button" class="botao pequeno perigo" id="botao-excluir" hidden><span class="icone-botao" data-icone="lixeira"></span>Excluir</button>
+      </div>
+      <p id="painel-vazio" class="nota">Escolha uma nota na lista ou crie uma nova.</p>
+      <div id="painel-nota" hidden>
+        <label class="campo so-leitor" for="titulo-nota">Título da nota</label>
+        <input type="text" id="titulo-nota" class="titulo-nota" maxlength="120" placeholder="Título da nota" autocomplete="off">
+        <div class="etiquetas-nota" id="etiquetas-nota">
+          <span id="rotulo-etiquetas" class="rotulo-etiquetas">Etiquetas</span>
+          <ul id="chips-etiquetas" class="chips" aria-labelledby="rotulo-etiquetas"></ul>
+          <label class="so-leitor" for="nova-etiqueta">Adicionar etiqueta</label>
+          <input type="text" id="nova-etiqueta" class="nova-etiqueta" list="sugestoes-etiquetas" maxlength="40" placeholder="Nova etiqueta (Enter)" autocomplete="off" autocapitalize="none">
+          <datalist id="sugestoes-etiquetas"></datalist>
+        </div>
+        <div id="barra-ferramentas" class="barra-ferramentas"></div>
+        <div id="editor" class="editor"></div>
+      </div>
+    </section>
+  </div>
+  <footer>As notas ficam em arquivos neste servidor e funcionam sem internet. Veja a <a href="/ajuda/#notas">Ajuda</a>.</footer>
+</main>
+</body>
+</html>

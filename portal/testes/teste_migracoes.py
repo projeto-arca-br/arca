@@ -11,6 +11,13 @@ REVERSA_005 = (
 )
 
 
+REVERSA_006 = (
+    Path(configuracoes.diretorio_migracoes)
+    / "down"
+    / "006_wikipedia_e_notas_no_portal.down.sql"
+)
+
+
 def _tabelas() -> set[str]:
     with banco.cursor() as cur:
         cur.execute("SHOW TABLES")
@@ -28,7 +35,7 @@ def teste_rodar_duas_vezes_e_idempotente(cliente):
     assert banco.rodar_migracoes() == []
     with banco.cursor() as cur:
         cur.execute("SELECT versao FROM migracoes_aplicadas ORDER BY versao")
-        assert [r["versao"] for r in cur.fetchall()] == ["001", "002", "003", "004", "005"]
+        assert [r["versao"] for r in cur.fetchall()] == ["001", "002", "003", "004", "005", "006"]
 
 
 def teste_tabelas_e_semente_existem(cliente):
@@ -80,7 +87,7 @@ def teste_reversa_e_nova_aplicacao_preservam_favoritos(cliente):
                 ("Primeiros socorros", "/notas/socorro", "saude")
             ]
             cur.execute("SELECT version FROM schema_migrations ORDER BY version")
-            assert [r["version"] for r in cur.fetchall()] == ["001", "002", "004", "005"]
+            assert [r["version"] for r in cur.fetchall()] == ["001", "002", "004", "005", "006"]
             cur.execute("SELECT check_url FROM services WHERE slug = 'mapas'")
             assert cur.fetchone()["check_url"].endswith("/api/health")
     finally:
@@ -117,3 +124,31 @@ def teste_reversa_da_005_volta_para_traducao_e_reaplica(cliente):
         aplicadas = banco.rodar_migracoes()
     assert aplicadas == ["005_tradutor_no_portal.sql"]
     assert _caminho_traducao() == "/tradutor/"
+
+
+def _caminho_servico(identificador: str) -> str:
+    with banco.cursor() as cur:
+        cur.execute("SELECT caminho FROM servicos WHERE identificador = %s", (identificador,))
+        return cur.fetchone()["caminho"]
+
+
+def teste_migracao_006_aponta_cartoes_para_wikipedia_e_anotacoes(cliente):
+    assert _caminho_servico("wiki") == "/wikipedia/"
+    assert _caminho_servico("notas") == "/anotacoes/"
+
+
+def teste_reversa_da_006_volta_para_wiki_e_notas_e_reaplica(cliente):
+    try:
+        with banco.cursor() as cur:
+            for instrucao in banco.dividir_instrucoes(REVERSA_006.read_text(encoding="utf-8")):
+                cur.execute(instrucao)
+        assert _caminho_servico("wiki") == "/wiki/"
+        assert _caminho_servico("notas") == "/notas/"
+        with banco.cursor() as cur:
+            cur.execute("SELECT versao FROM migracoes_aplicadas ORDER BY versao")
+            assert "006" not in [r["versao"] for r in cur.fetchall()]
+    finally:
+        aplicadas = banco.rodar_migracoes()
+    assert aplicadas == ["006_wikipedia_e_notas_no_portal.sql"]
+    assert _caminho_servico("wiki") == "/wikipedia/"
+    assert _caminho_servico("notas") == "/anotacoes/"

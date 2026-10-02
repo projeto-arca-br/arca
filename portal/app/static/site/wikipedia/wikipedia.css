@@ -1,0 +1,21 @@
+.so-leitor{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.campo{display:flex;flex-direction:column;gap:4px;font-weight:600;color:var(--texto);margin:8px 0}
+.campo select,.caixa-busca input{min-height:44px;padding:0 10px;border-radius:8px;border:1px solid var(--borda);background:var(--superficie);color:var(--texto);font:inherit;font-weight:400;width:100%}
+.linha-busca{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;margin:8px 0}
+.caixa-busca{position:relative;flex:1 1 260px}
+#lista-sugestoes{position:absolute;z-index:5;left:0;right:0;top:100%;margin:2px 0 0;padding:4px 0;list-style:none;background:var(--superficie);border:1px solid var(--borda);border-radius:8px;box-shadow:var(--sombra);max-height:60vh;overflow:auto}
+#lista-sugestoes li{padding:10px 12px;min-height:44px;cursor:pointer}
+#lista-sugestoes li:hover,#lista-sugestoes li[aria-selected="true"]{background:var(--fundo);outline:2px solid var(--borda);outline-offset:-2px}
+.botao:disabled{opacity:.55;cursor:not-allowed}
+.nota{margin:4px 0;padding:8px 12px;border-radius:8px;border:1px solid var(--borda);background:var(--superficie);color:var(--texto-suave);font-size:.92rem}
+.mensagem{color:var(--texto-suave);min-height:1.5em}
+.mensagem.err{color:var(--fora-do-ar)}
+.resultados{list-style:none;margin:8px 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.resultados li{padding:10px 14px;border:1px solid var(--borda);border-radius:8px;background:var(--superficie)}
+.resultados a{font-weight:600;font-size:1.05rem;overflow-wrap:anywhere}
+.resultados p{margin:4px 0 0;color:var(--texto-suave);font-size:.92rem}
+.acoes{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.pagina-atual{color:var(--texto-suave)}
+.barra-artigo{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;margin:8px 0}
+#quadro-artigo{display:block;width:100%;height:calc(100vh - 140px);min-height:420px;border:1px solid var(--borda);border-radius:8px;background:#fff}
+@media(max-width:480px){.linha-busca .botao{flex:1 1 100%}#quadro-artigo{height:calc(100vh - 110px)}}

@@ -98,3 +98,7 @@ form.adicionar .botao{align-self:end}
 code,kbd{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.9em;background:var(--fundo);padding:1px 5px;border-radius:4px}
 footer{color:var(--texto-suave);font-size:.85rem;margin-top:32px}
 .so-leitor{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.acoes{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.contador{margin:0;color:var(--texto-suave);font-size:.85rem}
+.nota{margin:4px 0;padding:8px 12px;border-radius:8px;border:1px solid var(--borda);background:var(--superficie);color:var(--texto-suave);font-size:.92rem}
+.botao:disabled{opacity:.55;cursor:not-allowed}

@@ -58,6 +58,27 @@ portal/app/static/site/js/*.js | path~'path' | elemento SVG 'path'
 portal/app/static/site/mapas/mapas.js | name~className|properties | DOM e esquema dos tiles Protomaps (terceiros)
 portal/app/static/site/mapas/mapas.js | kind~kind | esquema dos tiles Protomaps (terceiros)
 
+# ---- Páginas do portal (specs 019 e 020): APIs de Kiwix e FlatNotes e DOM/CSS padrão ----
+portal/app/static/site/*/*.html | title~<iframe[^>]* title= | atributo HTML 'title' do iframe
+portal/app/static/site/wikipedia/wikipedia.css | position~position: | propriedade CSS 'position'
+portal/app/static/site/wikipedia/wikipedia.js | name~getElementsByTagName|<name> | API DOM getElementsByTagName(NS) e elemento <name> do catálogo OPDS do Kiwix (terceiros)
+portal/app/static/site/wikipedia/wikipedia.js | title~'title' | elemento <title> do feed OPDS/RSS do Kiwix (terceiros)
+portal/app/static/site/wikipedia/wikipedia.js | description~'description' | elemento <description> do RSS de busca do Kiwix (terceiros)
+portal/app/static/site/wikipedia/wikipedia.js | kind~d\.kind | campo 'kind' do JSON de /wiki/suggest do Kiwix (terceiros)
+portal/app/static/site/wikipedia/wikipedia.js | path~d\.path | campo 'path' do JSON de /wiki/suggest do Kiwix (terceiros)
+portal/app/static/site/anotacoes/anotacoes.js | title~nota\.title|titleHighlights|\{ title:|newTitle|resposta\.title | campos 'title' e 'titleHighlights' da API do FlatNotes (terceiros)
+portal/app/static/site/anotacoes/anotacoes.js | name~arquivo\.name | propriedade 'name' do objeto File do DOM (nome do arquivo escolhido)
+portal/app/static/site/anotacoes/anexos.js | name~arquivo\.name|\{ name: | propriedade 'name' do objeto File do DOM e objeto equivalente nos testes
+portal/app/static/site/anotacoes/etiquetas.js | name~t\.name|`name` | campo 'name' de objetos de etiqueta que versões do FlatNotes podem devolver em /api/tags (terceiros)
+portal/testes/teste_conversor.py | name~"name" | propriedade 'name' do objeto File do DOM, imitada nos casos de anexo
+portal/app/static/site/anotacoes/conversor.js | name~tagName | propriedade DOM 'tagName' (padrão da web) lida pelo conversor
+portal/app/static/site/anotacoes/editor.js | name~tagName | propriedade DOM 'tagName' (padrão da web) lida pelo editor
+portal/app/static/site/anotacoes/editor.js | title~setAttribute\('title' | atributo HTML 'title' (dica dos botões da barra de ferramentas)
+portal/app/static/site/anotacoes/anotacoes.css | position~position: | propriedade CSS 'position' (menu "/" perto do cursor)
+caddy/Caddyfile | path~@wiki path | matcher 'path' do Caddy
+scripts/fumaca.sh | name~<name> | elemento <name> do catálogo do Kiwix citado em comentário
+scripts/fumaca.sh | title~\\"title\\" | campo JSON 'title' da API do FlatNotes (com aspas escapadas)
+
 # ---- Documentação: nomes antigos citados de propósito (guia de atualização) ----
 README.md | profile~COMPOSE_PROFILES | variável do Docker Compose, mantida
 docs/*.md | profile~COMPOSE_PROFILES | variável do Docker Compose

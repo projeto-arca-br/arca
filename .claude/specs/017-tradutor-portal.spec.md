@@ -5,7 +5,7 @@ priority: high
 tags: [feature, portal, frontend, translate]
 dependencies: [004-portal-frontend.spec.md, 006-extra-services.spec.md, 016-corrigir-modelos-traducao.spec.md]
 related_prd: .claude/prd/003-tradutor-no-portal.md
-status: pending
+status: done
 created: 2026-10-01
 ---
 

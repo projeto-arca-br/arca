@@ -1,0 +1,83 @@
+/* Notas: só o que é específico da página; botões, cartões, campos e temas vêm de /css/style.css. */
+.anotacoes-page [hidden]{display:none!important}
+.anotacoes-miolo .mensagem{color:var(--texto-suave)}
+.anotacoes-miolo .mensagem.err{color:var(--fora-do-ar)}
+.anotacoes{display:grid;grid-template-columns:minmax(240px,320px) minmax(0,1fr);gap:16px;align-items:start}
+@media(min-width:721px){.anotacoes.recolhida{grid-template-columns:minmax(0,1fr)}.anotacoes.recolhida .lista-notas{display:none}}
+
+/* barra lateral */
+.lista-notas{min-width:0}
+.lista-notas input[type=search]{width:100%;min-height:44px;padding:0 10px;border-radius:8px;border:1px solid var(--borda);background:var(--superficie);color:var(--texto);font:inherit;font-weight:400}
+.lista-notas .campo{margin:0 0 8px}
+.itens-notas{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.item-nota{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:8px;border:1px solid var(--borda);background:var(--fundo);color:var(--texto);text-decoration:none;overflow-wrap:anywhere}
+.item-nota[aria-current=true]{border-color:var(--acento);box-shadow:inset 3px 0 0 var(--acento)}
+.item-nota .trecho{color:var(--texto-suave);font-size:.9rem}
+.item-nota small{color:var(--texto-suave)}
+mark{background:var(--brasa);color:var(--carvao);border-radius:3px;padding:0 2px}
+
+/* etiquetas (chips) */
+.chips{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:4px;min-height:32px;padding:0 4px 0 10px;border-radius:16px;border:1px solid var(--borda);background:var(--fundo);color:var(--texto);font-size:.9rem}
+.chip button{display:inline-flex;align-items:center;justify-content:center;min-width:28px;min-height:28px;border:0;border-radius:14px;background:none;color:inherit;font:inherit;cursor:pointer}
+.chip button:hover,.chip button:focus-visible{background:var(--borda)}
+.filtro-etiquetas{max-height:7.5em;overflow:auto;margin-top:4px}
+.filtro-etiquetas .chip{padding:0;cursor:pointer}
+.filtro-etiquetas .chip button{padding:0 10px;min-height:32px;border-radius:16px}
+.filtro-etiquetas .chip button[aria-pressed=true]{background:var(--acento);color:var(--sobre-acento)}
+.etiquetas-nota{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.rotulo-etiquetas{color:var(--texto-suave);font-size:.9rem}
+.nova-etiqueta{flex:1 1 160px;min-width:0;min-height:36px;padding:0 10px;border-radius:8px;border:1px solid var(--borda);background:var(--superficie);color:var(--texto);font:inherit}
+
+/* folha */
+.folha{min-width:0;gap:10px}
+.folha-topo{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.estado-salvamento{margin-left:auto}
+.estado-salvamento.err{color:var(--fora-do-ar);font-weight:600}
+#painel-nota{display:flex;flex-direction:column;gap:10px}
+.folha input.titulo-nota{min-height:52px;font-size:1.6rem;font-weight:700;color:var(--titulo)}
+.barra-ferramentas{display:flex;align-items:center;gap:4px;overflow-x:auto;padding:6px 0;border-block:1px solid var(--borda)}
+.ferramenta{flex:none;min-width:36px;font-weight:700}
+.ferramenta svg{width:18px;height:18px}
+.ferramenta[aria-pressed=true]{background:var(--acento);color:var(--sobre-acento);border-color:var(--acento)}
+.separador{flex:none;width:1px;align-self:stretch;margin:0 4px;background:var(--borda)}
+
+/* área editável */
+.editor{min-height:50vh;padding:8px 4px;line-height:1.6;overflow-wrap:anywhere;border-radius:8px}
+.editor>p:only-child:has(>br:only-child)::before{content:"Escreva aqui ou digite / para inserir um bloco";float:left;height:0;color:var(--texto-suave);pointer-events:none}
+.editor h1,.editor h2,.editor h3,.editor h4,.editor h5,.editor h6{color:var(--titulo);margin:1em 0 .4em}
+.editor h1{font-size:1.6rem}
+.editor h2{font-size:1.35rem}
+.editor h3{font-size:1.15rem}
+.editor p{margin:.5em 0}
+.editor blockquote{margin:.8em 0;padding:.1em 12px;border-left:4px solid var(--borda);color:var(--texto-suave)}
+.editor code{padding:1px 5px;border-radius:4px;background:var(--fundo);border:1px solid var(--borda);font-size:.92em}
+.editor pre{padding:12px;border-radius:8px;background:var(--fundo);border:1px solid var(--borda);overflow:auto;white-space:pre-wrap}
+.editor pre code{padding:0;border:0;background:none}
+.editor hr{border:0;border-top:2px solid var(--borda);margin:1em 0}
+.editor img{max-width:100%;height:auto}
+.editor.soltando{outline:2px dashed var(--acento);outline-offset:2px}
+.editor table{border-collapse:collapse;width:100%;margin:.8em 0}
+.editor th,.editor td{border:1px solid var(--borda);padding:6px 8px;min-width:60px;text-align:left}
+.editor th{background:var(--fundo)}
+.editor li.tarefa{list-style:none;margin-left:-1.4em}
+.editor li.tarefa>input{width:18px;height:18px;margin:0 8px 0 0;vertical-align:middle;accent-color:var(--acento)}
+.editor li.tarefa:has(>input:checked){color:var(--texto-suave)}
+
+/* menu "/" (posicionado perto do cursor pelo editor) */
+.menu-comandos{position:fixed;z-index:20;list-style:none;margin:0;padding:4px;min-width:220px;max-height:50vh;overflow:auto;background:var(--superficie);color:var(--texto);border:1px solid var(--borda);border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.menu-comandos li{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 10px;border-radius:6px;cursor:pointer}
+.menu-comandos li[aria-selected=true]{background:var(--acento);color:var(--sobre-acento)}
+.menu-comandos kbd{background:none;padding:0;opacity:.8}
+
+#botao-voltar{display:none}
+.icone-botao{display:inline-flex}
+@media(max-width:720px){
+  .anotacoes{grid-template-columns:minmax(0,1fr)}
+  .anotacoes .folha{display:none}
+  .anotacoes.mostrando-folha .lista-notas{display:none}
+  .anotacoes.mostrando-folha .folha{display:flex}
+  #botao-voltar{display:inline-flex}
+  #botao-recolher{display:none}
+  .folha input.titulo-nota{font-size:1.3rem}
+}

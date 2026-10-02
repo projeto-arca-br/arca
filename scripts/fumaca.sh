@@ -145,6 +145,26 @@ verificacoes_pilha() {
   esperar_codigo 200 "/notas/ (FlatNotes)" "$BASE/notas/" -L
   esperar_codigo 200 "/wiki/ (Kiwix)" "$BASE/wiki/" -L
   esperar_codigo 200 "/wiki/catalog/v2/entries (catálogo de ZIMs)" "$BASE/wiki/catalog/v2/entries"
+  esperar_codigo 200 "/wikipedia/ (página do portal)" "$BASE/wikipedia/"
+  esperar_codigo 200 "/wikipedia/wikipedia.js" "$BASE/wikipedia/wikipedia.js"
+  esperar_codigo 200 "/wikipedia/wikipedia.css" "$BASE/wikipedia/wikipedia.css"
+  # identificador do ZIM = último trecho do link text/html do catálogo (não o <name>)
+  local zim_id
+  zim_id="$(curl -fs "$BASE/wiki/catalog/v2/entries" | grep -oE '<link[^>]*type="text/html"[^>]*>' | grep -oE 'href="[^"]*/content/[^"/?]+' | head -1 | sed -E 's#.*/content/##' || true)"
+  if [ -n "$zim_id" ]; then
+    esperar_codigo 200 "/wiki/suggest do ZIM $zim_id" "$BASE/wiki/suggest?content=$zim_id&term=a"
+    esperar_codigo 200 "/wiki/search (RSS) do ZIM $zim_id" "$BASE/wiki/search?content=$zim_id&pattern=a&format=xml"
+  else
+    avisar "catálogo sem ZIM: suggest e search não verificados"
+  fi
+  esperar_codigo 200 "/anotacoes/ (página do portal)" "$BASE/anotacoes/"
+  esperar_codigo 200 "/anotacoes/anotacoes.js" "$BASE/anotacoes/anotacoes.js"
+  esperar_codigo 200 "/anotacoes/editor.js" "$BASE/anotacoes/editor.js"
+  esperar_codigo 200 "/anotacoes/markdown.js" "$BASE/anotacoes/markdown.js"
+  esperar_codigo 200 "/anotacoes/etiquetas.js" "$BASE/anotacoes/etiquetas.js"
+  esperar_codigo 200 "/anotacoes/anexos.js" "$BASE/anotacoes/anexos.js"
+  esperar_codigo 200 "/anotacoes/conversor.js" "$BASE/anotacoes/conversor.js"
+  esperar_codigo 200 "/anotacoes/anotacoes.css" "$BASE/anotacoes/anotacoes.css"
   esperar_codigo 404 "rota inexistente" "$BASE/nao-existe-xyz"
 
   local corpo
@@ -212,9 +232,40 @@ PY
   dc restart flatnotes >/dev/null 2>&1; dc up -d --wait >/dev/null 2>&1 || true
   curl -fs "$BASE/notas/api/notes/fumaca-nota" | grep -q marcador-fumaca && passou "nota persiste após reiniciar o FlatNotes" || falhou "nota perdida após restart"
 
+  # ciclo completo da página de notas com título exclusivo (acento e espaço), limpo ao final
+  local titulo_nota="Água fumaça 020" caminho_nota="%C3%81gua%20fuma%C3%A7a%20020" codigo_ciclo
+  codigo_ciclo="$(codigo "$BASE/notas/api/notes" -X POST -H 'content-type: application/json' -d "{\"title\":\"$titulo_nota\",\"content\":\"conteudo-inicial-fumaca\"}")"
+  [ "$codigo_ciclo" = 200 ] || [ "$codigo_ciclo" = 201 ] && passou "notas: criar \"$titulo_nota\" ($codigo_ciclo)" || falhou "notas: criar \"$titulo_nota\" ($codigo_ciclo)"
+  verificar "notas: arquivo .md com acento gravado em data/flatnotes" test -f "$TRABALHO/data/flatnotes/$titulo_nota.md"
+  esperar_codigo 200 "notas: editar via PATCH" "$BASE/notas/api/notes/$caminho_nota" -X PATCH -H 'content-type: application/json' -d '{"newContent":"conteudo-editado-fumaca"}'
+  curl -fs "$BASE/notas/api/notes/$caminho_nota" | grep -q conteudo-editado-fumaca && passou "notas: edição gravada" || falhou "notas: edição não gravada"
+  curl -fs "$BASE/notas/api/search?term=conteudo-editado-fumaca" | grep -q "fuma" && passou "notas: busca encontra a nota pelo conteúdo" || falhou "notas: busca não encontrou a nota"
+  # etiqueta e anexo (spec 024): título, etiqueta e arquivo exclusivos da fumaça; nada de notas reais
+  local titulo_anexo="fumaca-anexo-024" etiqueta_fumaca="fumacaetiqueta024" arquivo_anexo="fumaca-anexo-024.txt" resposta_anexo nome_anexo
+  codigo_ciclo="$(codigo "$BASE/notas/api/notes" -X POST -H 'content-type: application/json' -d "{\"title\":\"$titulo_anexo\",\"content\":\"#$etiqueta_fumaca\\n\\ncorpo-fumaca-024\\n\"}")"
+  [ "$codigo_ciclo" = 200 ] || [ "$codigo_ciclo" = 201 ] && passou "notas: criar nota com etiqueta ($codigo_ciclo)" || falhou "notas: criar nota com etiqueta ($codigo_ciclo)"
+  curl -fs "$BASE/notas/api/search?term=%23$etiqueta_fumaca" | grep -q "$titulo_anexo" && passou "notas: busca por #etiqueta encontra a nota" || falhou "notas: busca por #etiqueta não encontrou a nota"
+  curl -fs "$BASE/notas/api/tags" | grep -q "$etiqueta_fumaca" && passou "notas: /api/tags lista a etiqueta" || falhou "notas: /api/tags não lista a etiqueta"
+  printf 'conteudo-anexo-fumaca-024\n' > "$TRABALHO/$arquivo_anexo"
+  resposta_anexo="$(curl -s --max-time 15 -F "file=@$TRABALHO/$arquivo_anexo" "$BASE/notas/api/attachments" || true)"
+  nome_anexo="$(printf '%s' "$resposta_anexo" | python3 -c 'import json,sys; print(json.load(sys.stdin)["filename"])' 2>/dev/null || true)"
+  [ -n "$nome_anexo" ] && passou "notas: anexo enviado ($nome_anexo)" || falhou "notas: envio de anexo falhou: $resposta_anexo"
+  if [ -n "$nome_anexo" ]; then
+    curl -fs "$BASE/notas/attachments/$nome_anexo" | grep -q conteudo-anexo-fumaca-024 && passou "notas: anexo baixa por /notas/attachments/" || falhou "notas: anexo não baixou"
+    esperar_codigo 200 "notas: nota com link do anexo (PATCH)" "$BASE/notas/api/notes/$titulo_anexo" -X PATCH -H 'content-type: application/json' -d "{\"newContent\":\"#$etiqueta_fumaca\\n\\n[$arquivo_anexo](attachments/$nome_anexo)\\n\"}"
+    curl -fs "$BASE/notas/api/search?term=fumaca-anexo" | grep -q "$titulo_anexo" && passou "notas: busca encontra a nota com anexo" || falhou "notas: busca não encontrou a nota com anexo"
+    # o FlatNotes não apaga anexos: remove só o arquivo criado aqui, dentro do ambiente de teste
+    rm -f "$TRABALHO/data/flatnotes/attachments/$nome_anexo" 2>/dev/null || true
+  fi
+  rm -f "$TRABALHO/$arquivo_anexo"
+  esperar_codigo 200 "notas: excluir nota com etiqueta" "$BASE/notas/api/notes/$titulo_anexo" -X DELETE
+  esperar_codigo 404 "notas: nota com etiqueta excluída devolve 404" "$BASE/notas/api/notes/$titulo_anexo"
+  esperar_codigo 200 "notas: excluir via DELETE" "$BASE/notas/api/notes/$caminho_nota" -X DELETE
+  esperar_codigo 404 "notas: nota excluída devolve 404" "$BASE/notas/api/notes/$caminho_nota"
+
   informar "== 7) Páginas sem recurso externo =="
   local pagina recurso_pagina ruins n=0
-  for pagina in / /ajuda/ /mapas/; do
+  for pagina in / /ajuda/ /mapas/ /wikipedia/ /anotacoes/; do
     ruins=""
     # todos os href/src/import relativos resolvem (200) e nenhum aponta para host externo
     while IFS= read -r recurso_pagina; do
@@ -230,7 +281,7 @@ PY
     [ -z "$ruins" ] && passou "$pagina: recursos locais resolvem e nenhum é externo" || falhou "$pagina: problemas:$ruins"
   done
   local recurso externos=""
-  for recurso in /css/style.css /js/common.js /js/app.js /mapas/mapas.js /mapas/mapas.css; do
+  for recurso in /css/style.css /js/common.js /js/app.js /mapas/mapas.js /mapas/mapas.css /wikipedia/wikipedia.js /wikipedia/wikipedia.css /anotacoes/anotacoes.js /anotacoes/editor.js /anotacoes/markdown.js /anotacoes/conversor.js /anotacoes/etiquetas.js /anotacoes/anexos.js /anotacoes/anotacoes.css; do
     # nenhuma URL absoluta http(s) fora do próprio host (links de atribuição do OSM são só texto clicável)
     curl -fs "$BASE$recurso" | grep -oE 'https?://[A-Za-z0-9./-]+' | grep -vE '^https?://(127\.0\.0\.1|localhost|arca\.local|www\.w3\.org|www\.openstreetmap\.org/copyright)' >/dev/null && externos="$externos $recurso" || true
   done

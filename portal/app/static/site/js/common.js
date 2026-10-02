@@ -22,7 +22,25 @@
     sol: 'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z M12 2v2 M12 20v2 M2 12h2 M20 12h2 M5 5l1.5 1.5 M17.5 17.5 19 19 M5 19l1.5-1.5 M17.5 6.5 19 5',
     lua: 'M20 14A8 8 0 0 1 10 4a8 8 0 1 0 10 10z',
     mais: 'M12 5v14 M5 12h14',
-    arca: 'M3 15h18l-2 5H5z M12 15V4 M12 5l6 5h-6'
+    arca: 'M3 15h18l-2 5H5z M12 15V4 M12 5l6 5h-6',
+    // editor de notas (spec 023)
+    negrito: 'M7 4h6a3.5 3.5 0 0 1 0 7H7z M7 11h7a3.5 3.5 0 0 1 0 7H7z',
+    italico: 'M10 4h8 M6 20h8 M15 4l-6 16',
+    riscado: 'M4 12h16 M16.5 7.5C16 5.5 14.3 4.5 12 4.5c-2.5 0-4.2 1.2-4.2 3 0 1.6 1.3 2.5 3.2 3 M8 16c.5 2 2.3 3 4.7 3 2.7 0 4.5-1.2 4.5-3 0-1-.5-1.6-1.2-2',
+    titulo: 'M5 5v14 M13 5v14 M5 12h8 M17 10l3-2v11',
+    lista: 'M9 6h11 M9 12h11 M9 18h11 M4 6h.01 M4 12h.01 M4 18h.01',
+    listanum: 'M10 6h10 M10 12h10 M10 18h10 M4 5l1.5-1v5 M4 14h3l-3 3.5h3',
+    tarefa: 'M4 5h5v5H4z M5 7.5l1.2 1.2L8 6.5 M12 7.5h8 M4 14h5v5H4z M12 16.5h8',
+    citacao: 'M5 7h5v5l-3 5H5l2-4H5z M14 7h5v5l-3 5h-2l2-4h-2z',
+    codigo: 'M8 7l-5 5 5 5 M16 7l5 5-5 5 M14 5l-4 14',
+    link: 'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1 M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1',
+    imagem: 'M4 5h16v14H4z M4 16l5-5 4 4 3-3 4 4 M9 9h.01',
+    tabela: 'M4 5h16v14H4z M4 10h16 M4 15h16 M10 5v14',
+    divisor: 'M3 12h18 M7 6h10 M7 18h10',
+    menu: 'M4 6h16 M4 12h16 M4 18h16',
+    voltar: 'M19 12H5 M11 6l-6 6 6 6',
+    // anexos e etiquetas (spec 024)
+    anexo: 'M20 11l-8.5 8.5a5 5 0 0 1-7-7L13 4a3.5 3.5 0 0 1 5 5l-8.5 8.5a2 2 0 0 1-3-3L14 7'
   };
   function icone(nome, cls) {
     var s = document.createElementNS(SVG, 'svg');

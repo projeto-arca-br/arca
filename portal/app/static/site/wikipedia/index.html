@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Arca - Wikipédia</title>
+<link rel="icon" href="/imagens/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/imagens/favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="/imagens/icone-192.png">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/wikipedia/wikipedia.css">
+<script src="/js/common.js"></script>
+<script type="module" src="/wikipedia/wikipedia.js"></script>
+</head>
+<body class="wikipedia-page">
+<header class="topo">
+  <a class="marca" href="/"><img class="logo-claro" src="/imagens/logo.svg" alt="Arca" width="122" height="40"><img class="logo-escuro" src="/imagens/logo-escuro.svg" alt="" width="122" height="40"></a>
+  <nav class="principal" aria-label="Principal">
+    <a href="/">Painel</a>
+    <a href="/ajuda/#wiki">Ajuda</a>
+    <button type="button" class="botao" id="alternar-tema" aria-label="Alternar tema"></button>
+  </nav>
+</header>
+<main class="miolo wikipedia-miolo">
+  <h1>Wikipédia</h1>
+  <p class="destaque">Pesquise e leia artigos sem internet. Tudo vem deste servidor, na sua rede local.</p>
+  <form id="form-busca" role="search" autocomplete="off" novalidate>
+    <label class="campo" id="campo-zim" for="seletor-zim" hidden>Conteúdo
+      <select id="seletor-zim" disabled></select>
+    </label>
+    <div class="linha-busca">
+      <div class="caixa-busca">
+        <label class="so-leitor" for="campo-busca">Buscar na Wikipédia</label>
+        <input type="search" id="campo-busca" placeholder="Digite o que você procura" role="combobox" aria-expanded="false" aria-controls="lista-sugestoes" aria-autocomplete="list" enterkeyhint="search" disabled>
+        <ul id="lista-sugestoes" role="listbox" aria-label="Sugestões" hidden></ul>
+      </div>
+      <button type="submit" class="botao primario" id="botao-buscar" disabled>Buscar</button>
+      <button type="button" class="botao" id="botao-aleatorio" disabled>Artigo aleatório</button>
+    </div>
+  </form>
+  <p id="mensagem" class="mensagem" role="status"></p>
+  <section id="area-resultados" aria-label="Resultados da busca" hidden>
+    <p id="total-resultados" class="nota"></p>
+    <ol id="lista-resultados" class="resultados"></ol>
+    <nav id="paginacao" class="acoes" aria-label="Páginas de resultados" hidden>
+      <button type="button" class="botao" id="pagina-anterior">Anterior</button>
+      <span id="pagina-atual" class="pagina-atual"></span>
+      <button type="button" class="botao" id="pagina-seguinte">Próxima</button>
+    </nav>
+  </section>
+  <section id="area-artigo" aria-label="Artigo" hidden>
+    <div class="barra-artigo">
+      <button type="button" class="botao pequeno" id="botao-voltar-busca" hidden>Voltar aos resultados</button>
+      <a class="botao pequeno" id="link-tela-cheia" href="/wiki/" target="_blank" rel="noopener">Abrir em tela cheia</a>
+    </div>
+    <iframe id="quadro-artigo" title="Artigo da Wikipédia"></iframe>
+  </section>
+  <footer>Conteúdo da Wikipédia servido pelo Kiwix, neste servidor. Veja a <a href="/ajuda/#wiki">Ajuda</a>.</footer>
+</main>
+</body>
+</html>

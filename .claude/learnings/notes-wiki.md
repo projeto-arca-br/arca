@@ -5,3 +5,4 @@
 - Busca: `/wiki/search?content=<nome-do-zim-sem-.zim>&pattern=termo` (o parâmetro `content`, nome vem de `/wiki/catalog/v2/entries`). Novos ZIMs exigem `docker compose restart kiwix`.
 - Páginas de artigos Kiwix trazem `<a href>` externos (citações), mas nenhum recurso externo é carregado automaticamente.
 - Imagens: ARCA_IMAGEM_FLATNOTES e ARCA_IMAGEM_KIWIX em `.env.example` (tag@digest).
+- Ver também `wikipedia-notas-no-portal.md` (páginas `/wikipedia/` e `/anotacoes/`, API do FlatNotes e do Kiwix na prática).
